@@ -1,0 +1,30 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: lint GitHub Actions
+      glob: ".github/**/*.{yaml,yml}"
+      run: mise run actions:lint
+    - name: lock mise tools
+      glob: "mise.toml"
+      run: mise lock
+      stage_fixed: true
+
+commit-msg:
+  parallel: true
+  jobs:
+    - name: commitlint
+      run: pnpm run commitlint --edit {1}
+
+post-checkout:
+  parallel: true
+  jobs:
+    - name: mise-install
+      glob: "mise.toml"
+      run: mise install
+
+post-merge:
+  parallel: true
+  jobs:
+    - name: mise-install
+      glob: "mise.toml"
+      run: mise install

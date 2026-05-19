@@ -1,3 +1,23 @@
 [tools]
+actionlint = "1.7.12"
+lefthook = "2.1.6"
 node = "24"
-pnpm = "10.20.0"
+pnpm = "10"
+zizmor = "1.24.1"
+
+
+[tasks."actions:zizmor"]
+description = "run zizmor security linter on GitHub Actions workflows"
+run = "zizmor --min-confidence medium .github/workflows"
+
+[tasks."actions:pinact"]
+description = "pin GitHub Actions versions to commit hashes"
+run = "pinact run"
+
+[tasks."actions:actionlint"]
+description = "lint GitHub Actions workflow syntax with actionlint"
+run = "actionlint"
+
+[tasks."actions:lint"]
+description = "lint GitHub Actions workflows (actionlint + zizmor)"
+depends = ["actions:actionlint", "actions:zizmor"]
