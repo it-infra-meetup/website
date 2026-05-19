@@ -1,6 +1,7 @@
 {
   "name": "it-infra-web-site-2",
   "private": true,
+  "packageManager": "pnpm@10.20.0",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
