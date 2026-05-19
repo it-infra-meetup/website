@@ -1,10 +1,11 @@
 {
-  "name": "it-infra-web-site-2",
+  "name": "it-infra-web-site",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite",
+    "dev:host": "vite --host",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },
