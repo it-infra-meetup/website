@@ -1,4 +1,4 @@
-# it-infra-web-site-2
+# it-infra-web-site
 
 IT インフラ Web サイト — Vue 3 + TypeScript + Vite
 
@@ -25,7 +25,7 @@ IT インフラ Web サイト — Vue 3 + TypeScript + Vite
 ```bash
 # リポジトリをクローン
 git clone <repository-url>
-cd it-infra-web-site-2
+cd website
 
 # mise でツールチェーンをインストール（初回のみ）
 mise install
