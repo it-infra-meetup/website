@@ -1,7 +1,7 @@
 <template>
   <div class="split-bg">
-    <ConsoleSide class="console-side"/>
-    <CircuitSide/>
+    <ConsoleSide class="console-side" />
+    <CircuitSide />
   </div>
 </template>
 

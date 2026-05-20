@@ -16,7 +16,9 @@
         <!-- スマホ: 最初に表示 -->
         <div class="about-header">
           <div class="flex items-center justify-end gap-4">
-            <h2 class="text-3xl font-bold main-text">ITインフラ集会とは</h2>
+            <h2 class="text-3xl font-bold main-text">
+              ITインフラ集会とは
+            </h2>
             <span class="font-mono text-4xl primary-text opacity-50">01</span>
           </div>
         </div>
@@ -24,10 +26,10 @@
         <!-- スマホ: 3番目に表示 -->
         <div class="about-text glass-panel bracket">
           <p class="muted-text text-sm leading-relaxed mb-4">
-            VRChatの中で開催される、ITインフラについて<br/>
-            みんなで語り合い知識を共有し合う集会です<br/>
-            設計・構築・運用・相談したい人々が集まります<br/>
-            データセンター、ISP、クラウド、社内SE...etc<br/>
+            VRChatの中で開催される、ITインフラについて<br>
+            みんなで語り合い知識を共有し合う集会です<br>
+            設計・構築・運用・相談したい人々が集まります<br>
+            データセンター、ISP、クラウド、社内SE...etc<br>
           </p>
           <div class="flex gap-2 justify-end flex-wrap font-mono text-xs primary-text">
             <span class="tag">DATACENTER</span>

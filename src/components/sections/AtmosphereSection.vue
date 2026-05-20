@@ -3,30 +3,38 @@
     <div class="content-wrapper">
       <div class="content-center w-full">
         <div class="mb-8">
-          <h2 class="text-3xl font-bold main-text inline-block border-b-2 border-primary pb-2">集会の様子</h2>
-          <p class="font-mono text-xs primary-text mt-1">Status: Active Gathering</p>
+          <h2 class="text-3xl font-bold main-text inline-block border-b-2 border-primary pb-2">
+            集会の様子
+          </h2>
+          <p class="font-mono text-xs primary-text mt-1">
+            Status: Active Gathering
+          </p>
         </div>
 
         <div class="atmosphere-container">
           <div
-              v-for="(item, index) in atmosphereItems"
-              :key="index"
-              class="atmosphere-card glass-panel hover:bg-white/80 transition-colors text-left"
+            v-for="(item, index) in atmosphereItems"
+            :key="index"
+            class="atmosphere-card glass-panel hover:bg-white/80 transition-colors text-left"
           >
-            <img class="mb-4" alt="" :src="item.img"/>
+            <img class="mb-4" alt="" :src="item.img">
             <div class="flex gap-2">
-            <component
+              <component
                 :is="getIcon(item.icon)"
                 :class="item.iconColor"
                 class="mb-2"
-            />
-            <h3 class="font-bold main-text mb-1">{{ item.title }}</h3>
+              />
+              <h3 class="font-bold main-text mb-1">
+                {{ item.title }}
+              </h3>
             </div>
-            <p class="text-xs muted-text">{{ item.description }}</p>
+            <p class="text-xs muted-text">
+              {{ item.description }}
+            </p>
             <RouterLink
-                v-if="item.link"
-                :to="item.link"
-                class="lt-link"
+              v-if="item.link"
+              :to="item.link"
+              class="lt-link"
             >
               {{ item.linkText }}
               <ArrowRight class="w-4 h-4" />
@@ -36,12 +44,12 @@
         <!-- スマホ用ドットインジケーター -->
         <div class="scroll-indicator">
           <button
-              v-for="(item, index) in atmosphereItems"
-              :key="index"
-              class="indicator-dot"
-              :class="{ active: currentIndex === index }"
-              @click="scrollToCard(index)"
-              :aria-label="`${item.title}へ移動`"
+            v-for="(item, index) in atmosphereItems"
+            :key="index"
+            class="indicator-dot"
+            :class="{ active: currentIndex === index }"
+            :aria-label="`${item.title}へ移動`"
+            @click="scrollToCard(index)"
           />
         </div>
       </div>

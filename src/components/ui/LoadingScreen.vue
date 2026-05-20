@@ -5,9 +5,11 @@
         SYSTEM BOOT SEQUENCE...
       </div>
       <div class="progress-container">
-        <div ref="loaderBar" class="progress-bar"></div>
+        <div ref="loaderBar" class="progress-bar" />
       </div>
-      <div ref="percentText" class="font-mono loader-percent text-xs mt-3">0%</div>
+      <div ref="percentText" class="font-mono loader-percent text-xs mt-3">
+        0%
+      </div>
     </div>
   </div>
 </template>

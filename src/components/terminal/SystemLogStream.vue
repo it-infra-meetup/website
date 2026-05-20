@@ -4,7 +4,7 @@
       SYS_LOG: STREAMING
     </div>
 
-    <div class="log-window" ref="logWindow">
+    <div ref="logWindow" class="log-window">
       <div
         v-for="log in systemLogStore.logs"
         :key="log.id"
@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <div class="scanline"></div>
+    <div class="scanline" />
   </div>
 </template>
 

@@ -2,7 +2,9 @@
   <section id="topics">
     <div class="content-wrapper">
       <div class="content-center">
-        <h2 class="text-4xl font-bold main-text mb-10 text-neon">Topics</h2>
+        <h2 class="text-4xl font-bold main-text mb-10 text-neon">
+          Topics
+        </h2>
         <div class="flex flex-wrap justify-center gap-8">
           <div
             v-for="(topic, index) in topics"

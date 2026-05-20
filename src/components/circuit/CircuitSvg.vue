@@ -1,20 +1,20 @@
 <template>
   <svg
-    ref="svgRef"
     id="circuit-svg"
+    ref="svgRef"
     preserveAspectRatio="xMidYMin slice"
   >
     <defs>
       <filter id="glow">
-        <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+        <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
         <feMerge>
-          <feMergeNode in="coloredBlur"/>
-          <feMergeNode in="SourceGraphic"/>
+          <feMergeNode in="coloredBlur" />
+          <feMergeNode in="SourceGraphic" />
         </feMerge>
       </filter>
     </defs>
 
-    <g ref="groupRef" id="circuit-group">
+    <g id="circuit-group" ref="groupRef">
       <!-- パスとパケットをここに動的生成 -->
     </g>
   </svg>

@@ -1,6 +1,8 @@
 <template>
   <nav class="nav-overlay">
-    <div class="nav-text"><span class="cursor">_</span></div>
+    <div class="nav-text">
+      <span class="cursor">_</span>
+    </div>
     <div class="text-right nav-text">
       <div>UPLINK: ESTABLISHED</div>
       <div>{{ uiStore.latencyDisplay }}</div>

@@ -4,7 +4,7 @@
       USER_TERM: ACTIVE
     </div>
 
-    <div class="terminal-window" ref="termWindow">
+    <div ref="termWindow" class="terminal-window">
       <!-- ウェルカムメッセージ -->
       <div class="log-line text-gray-500 mb-4">
         Welcome to IT-Infra Gathering Terminal v1.0<br>
@@ -14,10 +14,10 @@
       <!-- 出力行 -->
       <div class="log-output">
         <div
-            v-for="line in terminalStore.outputLines"
-            :key="line.id"
-            :class="['log-line', line.className]"
-            v-html="line.text"
+          v-for="line in terminalStore.outputLines"
+          :key="line.id"
+          :class="['log-line', line.className]"
+          v-html="line.text"
         />
       </div>
 
@@ -25,20 +25,20 @@
       <div class="input-line">
         <span class="prompt">guest@infra:~$</span>
         <input
-            ref="inputEl"
-            type="text"
-            id="console-input"
-            v-model="currentInput"
-            @keydown.enter="handleCommand"
-            autocomplete="off"
-            spellcheck="false"
-            aria-label="Terminal command input"
-            role="textbox"
-        />
+          id="console-input"
+          ref="inputEl"
+          v-model="currentInput"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Terminal command input"
+          role="textbox"
+          @keydown.enter="handleCommand"
+        >
       </div>
     </div>
 
-    <div class="scanline"></div>
+    <div class="scanline" />
   </div>
 </template>
 
