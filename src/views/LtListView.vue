@@ -43,8 +43,8 @@
         />
       </div>
 
-      <!-- Pagination -->
-      <Pagination
+      <!-- UIPagination -->
+      <UIPagination
         :current-page="currentPage"
         :total-pages="totalPages"
         @prev="prevPage"
@@ -68,7 +68,7 @@ import {ArrowLeft, ExternalLink} from '@lucide/vue'
 import {lts} from '@/consts'
 import DataStreamBackground from '@/components/layout/DataStreamBackground.vue'
 import LtCard from '@/components/lt/LtCard.vue'
-import Pagination from '@/components/ui/Pagination.vue'
+import UIPagination from '@/components/ui/UIPagination.vue'
 
 // ページネーション設定
 const ITEMS_PER_PAGE = 18
