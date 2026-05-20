@@ -9,20 +9,14 @@ export default defineConfig([
   tseslint.configs.recommendedTypeChecked,
   pluginVue.configs["flat/recommended"],
   {
-    ignores: ["dist/**"],
+    ignores: ["**/dist/**", "**/node_modules/**"],
   },
   {
     languageOptions: {
-      parserOptions: {
-        projectService: true,
-      },
+      parserOptions: { projectService: true },
       globals: { ...globals.browser },
     },
-    rules: {
-      // typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
-      // see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
-      "no-undef": "off",
-    },
+    rules: { "no-undef": "off" },
   },
   {
     files: ["**/*.vue"],
@@ -35,23 +29,24 @@ export default defineConfig([
     },
     rules: {
       "vue/max-attributes-per-line": ["error", {
-        "singleline": {
-          "max": 5
-        },
-        "multiline": {
-          "max": 5
-        }
-      }]
-    }
+        singleline: { max: 5 },
+        multiline:  { max: 5 },
+      }],
+    },
   },
   {
-    // use Node.js globals
-    files: ["./*.config.{ts,mjs,js}"],
+    files: [
+      "./*.config.{ts,mjs,js}",
+      "apps/*/*.config.{ts,mjs,js}",
+      "packages/*/*.config.{ts,mjs,js}",
+    ],
     languageOptions: {
-      parserOptions: {
-        projectService: true,
-      },
+      parserOptions: { projectService: true },
       globals: { ...globals.nodeBuiltin },
     },
+  },
+  {
+    files: ["packages/*/tests/**", "packages/*/scripts/**"],
+    rules: { "no-console": "off" },
   },
 ]);
