@@ -5,6 +5,18 @@
 - **Owners:** a1678991
 - **Spec location:** `docs/superpowers/specs/2026-05-20-vrc-ta-hub-client-design.md`
 
+## Amendments
+
+- **2026-05-20 (post-approval):** Switched to **Zod v4** and **hand-written
+  schemas**. Pre-flight checks revealed (a) `openapi-zod-client@1.18.3`
+  (latest) only emits Zod v3 syntax (`z.string().url()` etc.), and (b) its
+  output against `/api/schema/` is unreliable for this API — `weekdays`/`tags`
+  come out as `z.unknown().optional()` and several non-nullable fields are
+  emitted as nullable. Hand-writing the schemas removes the toolchain
+  mismatch and produces correct results in ~80 lines. `/api/schema/` is kept
+  in `tests/__fixtures__/openapi.yaml` as a reference snapshot for future
+  manual drift reviews.
+
 ## 1. Purpose
 
 Provide a pure-TypeScript, zod-validated client for the **public read-only** subset
@@ -87,32 +99,33 @@ exists but contains no `packages:` entry). The conversion moves the Vue app unde
 ├─ packages/
 │  └─ vrc-ta-hub-client/
 │     ├─ src/
-│     │  ├─ generated/
-│     │  │  └─ schemas.ts         # openapi-zod-client output (committed)
-│     │  ├─ client.ts             # hand-written factory + Result wiring
+│     │  ├─ schemas.ts            # hand-written zod v4 schemas (Community, Event, EventDetail, enums)
+│     │  ├─ client.ts             # factory + Result wiring
 │     │  ├─ errors.ts             # ClientError discriminated union
 │     │  ├─ result.ts             # Result<T, E> helpers
+│     │  ├─ url.ts                # URL builder
 │     │  └─ index.ts              # public surface
 │     ├─ tests/
 │     │  ├─ __fixtures__/
 │     │  │  ├─ community.json
 │     │  │  ├─ event.json
 │     │  │  ├─ event_detail.json
-│     │  │  └─ openapi.yaml       # snapshot of /api/schema/ at time of last codegen
+│     │  │  └─ openapi.yaml       # reference snapshot of /api/schema/
 │     │  ├─ schemas.test.ts
 │     │  ├─ client.test.ts
-│     │  └─ url-builder.test.ts
+│     │  ├─ url-builder.test.ts
+│     │  └─ result.test.ts
 │     ├─ scripts/
-│     │  ├─ codegen.ts            # runs openapi-zod-client on /api/schema/
-│     │  └─ refresh-fixtures.ts   # hits public endpoints, writes fixtures
+│     │  ├─ lib.ts                # shared helpers
+│     │  └─ refresh-fixtures.ts   # hits public endpoints + /api/schema/, writes fixtures
 │     ├─ tsconfig.json
 │     ├─ vitest.config.ts
 │     └─ package.json             # name: "@vrc-ta-hub/client", private
 ├─ aws/                           # unchanged
 ├─ .github/                       # workflow paths updated
-├─ eslint.config.ts               # ignores src/generated, extends globs
-├─ commitlint.config.mjs          # unchanged (no scope restriction)
-├─ lefthook.yaml                  # path globs updated
+├─ eslint.config.ts               # extends globs, console-allowed in tests/scripts
+├─ commitlint.config.mjs          # adds `vrc-ta-hub-client` to scope-enum
+├─ lefthook.yaml                  # unchanged
 ├─ release.config.mjs             # asset paths updated; single root release tag
 ├─ pnpm-workspace.yaml            # adds packages: apps/* + packages/*
 ├─ mise.toml, mise.lock           # unchanged
@@ -122,36 +135,29 @@ exists but contains no `packages:` entry). The conversion moves the Vue app unde
 Path aliases: `@/*` continues to resolve to `apps/website/src/*` via
 `apps/website/tsconfig.app.json` (no callers change).
 
-## 4. Codegen pipeline
+## 4. Schema strategy
 
-**Source of truth:** `https://vrc-ta-hub.com/api/schema/` (drf-spectacular).
+**Source of truth:** hand-written `src/schemas.ts` in **Zod v4** syntax. Field
+shapes are derived from empirical inspection of live responses (captured in
+`tests/__fixtures__/`) and cross-checked against the server's DRF serializers
+and the published OpenAPI document.
 
-**Tool:** `openapi-zod-client` (Astahmer) — used as a *zod-schema generator only*.
-We discard its generated zodios client and consume only the emitted
-`z.object(...)` / `z.enum(...)` declarations.
+**Why hand-written (revised from initial plan):** `openapi-zod-client@1.18.3`
+emits Zod v3 syntax (e.g. `z.string().url()`, removed in v4) and produces
+unreliable output for this API — `weekdays`/`tags` come out as
+`z.unknown().optional()`, several non-nullable fields are emitted as
+nullable. With only 3 objects + 2 enums to model, hand-writing is shorter
+than the post-processing correct codegen output would require.
 
-**Pipeline (`packages/vrc-ta-hub-client/scripts/codegen.ts`):**
+**Drift detection:** `tests/__fixtures__/openapi.yaml` holds a snapshot of
+`/api/schema/`. Refreshing via `pnpm fixtures:refresh` updates that file,
+and a reviewer can diff it manually to notice upstream changes. A scheduled
+CI drift job is **not** part of v1.
 
-1. Fetch `/api/schema/` to `.cache/openapi.yaml` (also written to `tests/__fixtures__/openapi.yaml`).
-2. Run `openapi-zod-client` programmatically against the cached schema. The
-   library's default template includes a zodios `Api` constant alongside the
-   zod schemas; we strip that constant (either via a custom Handlebars template
-   or a small post-processing step on the emitted source) so only the zod
-   schema declarations remain.
-3. Filter the output to the schemas this client exposes: `Community`, `Event`,
-   `EventDetail`, `WeekdayEnum`, `PlatformEnum`. Auth-gated request/response
-   schemas are dropped.
-4. Write to `src/generated/schemas.ts` (committed).
-5. Run `prettier --write` then `eslint --fix` on the output.
-
-Invocation: `pnpm --filter @vrc-ta-hub/client codegen`. Codegen never runs as
-part of `install`/`build` — the output is committed.
-
-**Generated module shape:**
+**Module shape (`packages/vrc-ta-hub-client/src/schemas.ts`):**
 
 ```ts
-// AUTO-GENERATED. Do not edit. Run `pnpm codegen` to refresh.
-import {z} from 'zod'
+import { z } from 'zod'
 
 export const WeekdayEnum = z.enum(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Other'])
 export const PlatformEnum = z.enum(['All', 'PC'])
@@ -328,7 +334,7 @@ No `map`/`andThen` combinators in v1 (YAGNI).
 `packages/vrc-ta-hub-client/src/errors.ts`:
 
 ```ts
-import type {z} from 'zod'
+import type { $ZodIssue } from 'zod/v4/core'
 
 export interface HttpError {
     kind: 'http'
@@ -348,11 +354,16 @@ export interface NetworkError {
 export interface ValidationError {
     kind: 'validation'
     url: string
-    issues: z.ZodIssue[]
+    issues: $ZodIssue[]
 }
 
 export type ClientError = HttpError | NetworkError | ValidationError
 ```
+
+Note: Zod v4 removed `z.ZodIssue` as a runtime export. The canonical type
+path is the `zod/v4/core` subpath, which is re-exported from `zod` as
+`z.core.$ZodIssue`. Importing from `zod/v4/core` is more explicit at the
+use site.
 
 Rationale for plain objects (vs. classes): matches the Result pattern, serializes
 cleanly through Pinia/devtools, and avoids `instanceof` cross-bundle issues.
@@ -391,10 +402,11 @@ packages/vrc-ta-hub-client/tests/
 │  ├─ community.json         # captured from /api/v1/community/?format=json
 │  ├─ event.json
 │  ├─ event_detail.json
-│  └─ openapi.yaml           # snapshot of /api/schema/ at time of last codegen
+│  └─ openapi.yaml           # reference snapshot of /api/schema/
 ├─ schemas.test.ts           # zod parses every record in every fixture
-├─ client.test.ts            # client.* against an injected fetch returning fixtures
-└─ url-builder.test.ts       # query param assembly
+├─ result.test.ts            # ok/err/isOk/isErr behaviour
+├─ url-builder.test.ts       # query param assembly
+└─ client.test.ts            # client.* against an injected fetch returning fixtures
 ```
 
 `schemas.test.ts` asserts:
@@ -430,10 +442,13 @@ Scripts:
   "test":             "vitest run",
   "test:watch":       "vitest",
   "typecheck":        "tsc --noEmit",
-  "codegen":          "tsx scripts/codegen.ts",
   "fixtures:refresh": "tsx scripts/refresh-fixtures.ts"
 }
 ```
+
+There is no `codegen` script — schemas are hand-written. `fixtures:refresh`
+also captures `/api/schema/` into `tests/__fixtures__/openapi.yaml` for
+manual drift inspection.
 
 CI runs `pnpm test` and `pnpm typecheck` (the root scripts shown in §9, which
 filter to `packages/*` for tests and to `packages/*` + `apps/*` for typecheck).
@@ -489,7 +504,7 @@ website deps move into `apps/website/package.json`.
     "lint:fix": "eslint . --cache --cache-strategy content --cache-location ./node_modules/.tmp/eslintcache --fix",
     "test": "pnpm -r --filter \"./packages/*\" test",
     "typecheck": "pnpm -r --filter \"./packages/*\" --filter \"./apps/*\" typecheck",
-    "codegen": "pnpm --filter @vrc-ta-hub/client codegen",
+    "fixtures:refresh": "pnpm --filter @vrc-ta-hub/client fixtures:refresh",
     "commitlint": "commitlint",
     "semantic-release": "semantic-release"
   },
@@ -562,14 +577,12 @@ website deps move into `apps/website/package.json`.
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "codegen": "tsx scripts/codegen.ts",
     "fixtures:refresh": "tsx scripts/refresh-fixtures.ts"
   },
   "dependencies": {
-    "zod": "^3.23.0"
+    "zod": "^4.4.0"
   },
   "devDependencies": {
-    "openapi-zod-client": "^1.18.0",
     "tsx": "^4.19.0",
     "typescript": "6.0.3",
     "vitest": "^2.1.0"
@@ -582,8 +595,8 @@ website deps move into `apps/website/package.json`.
 `eslint.config.ts` changes:
 
 - Replace the existing `{ ignores: ['dist/**'] }` block with one that ignores
-  workspace `dist/`, `node_modules/`, and the generated zod module:
-  `{ ignores: ['**/dist/**', '**/node_modules/**', 'packages/*/src/generated/**'] }`.
+  workspace `dist/` and `node_modules/`:
+  `{ ignores: ['**/dist/**', '**/node_modules/**'] }`.
 - Broaden the Node-globals override from `./*.config.{ts,mjs,js}` to also match
   nested workspace config files: `['./*.config.{ts,mjs,js}', 'apps/*/*.config.{ts,mjs,js}', 'packages/*/*.config.{ts,mjs,js}']`.
   Otherwise the new `apps/website/vite.config.ts` and `packages/vrc-ta-hub-client/vitest.config.ts`
@@ -623,8 +636,7 @@ The client package stays at `version: 0.0.0` (private, workspace-only) and is
 not independently versioned. `@semantic-release/npm` continues to run with
 `npmPublish: false` to update the root `package.json` version only;
 `apps/website/package.json` and `packages/vrc-ta-hub-client/package.json`
-versions stay frozen. `commitlint` does not restrict scopes, so no config
-change is needed for the new scope.
+versions stay frozen.
 
 ### Commit-message scopes
 
@@ -678,11 +690,13 @@ Current `lefthook.yaml` has no `src/**` globs — its hooks scope to
 1. Add `packages:` entry to `pnpm-workspace.yaml`.
 2. `git mv` Vue app to `apps/website/`; split `package.json`; verify
    `pnpm install` + `pnpm build:website` work.
-3. Scaffold `packages/vrc-ta-hub-client/` (empty `src/index.ts`, vitest config,
-   tsconfig).
-4. Update `eslint.config.ts`, `commitlint.config.mjs` (add `vrc-ta-hub-client`
+3. Update `eslint.config.ts`, `commitlint.config.mjs` (add `vrc-ta-hub-client`
    to `scope-enum`), `release.config.mjs`, and `.github/workflows/*`.
-5. Run codegen, write hand-written client + tests; commit fixtures.
+4. Scaffold `packages/vrc-ta-hub-client/` (package.json, tsconfig, vitest
+   config); run `pnpm fixtures:refresh`; commit `tests/__fixtures__/*.json`
+   and `openapi.yaml`.
+5. Hand-write `src/schemas.ts`, `result.ts`, `errors.ts`, `url.ts`,
+   `client.ts`, `index.ts` and their Vitest suites (TDD).
 6. Integrate the smallest possible call site in the Vue app (single store
    action) to prove the pipeline end-to-end.
 
@@ -691,8 +705,10 @@ kept mechanical (no behavioural changes) before any client code lands.
 
 ## 10. Open questions / follow-ups
 
-- **Drift-detection CI** — a weekly job that reruns codegen and fails on diff
-  may be added later, once the first integration is live.
+- **Drift review cadence** — there is no scheduled job. The
+  `tests/__fixtures__/openapi.yaml` snapshot is refreshed on demand via
+  `pnpm fixtures:refresh`, and a reviewer eyeballs the diff. If upstream
+  changes faster than expected, add a weekly fixture-refresh PR generator.
 - **Vitest at `apps/website`** — Vue component tests are out of scope here but
   may be useful once the client is integrated; revisit when there is a concrete
   reason.
