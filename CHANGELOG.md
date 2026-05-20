@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/it-infra-meetup/website/compare/v1.1.0...v1.2.0) (2026-05-20)
+
+
+### Features
+
+* **ci:** add frontend lint workflow and pnpm store cache ([#4](https://github.com/it-infra-meetup/website/issues/4)) ([4e6ce40](https://github.com/it-infra-meetup/website/commit/4e6ce402769fd62d4e284da65ff06f1e465e414c))
+
 # [1.1.0](https://github.com/it-infra-meetup/website/compare/v1.0.0...v1.1.0) (2026-05-20)
 
 
