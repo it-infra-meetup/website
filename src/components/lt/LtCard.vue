@@ -15,8 +15,12 @@
         <Calendar class="w-3 h-3" />
         {{ date }}
       </div>
-      <h3 class="lt-title">{{ title }}</h3>
-      <p class="lt-speaker">Speaker: {{ author }}</p>
+      <h3 class="lt-title">
+        {{ title }}
+      </h3>
+      <p class="lt-speaker">
+        Speaker: {{ author }}
+      </p>
     </div>
   </div>
 </template>

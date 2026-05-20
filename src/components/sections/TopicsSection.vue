@@ -2,7 +2,9 @@
   <section id="topics">
     <div class="content-wrapper">
       <div class="content-center">
-        <h2 class="text-4xl font-bold main-text mb-10 text-neon">Topics</h2>
+        <h2 class="text-4xl font-bold main-text mb-10 text-neon">
+          Topics
+        </h2>
         <div class="flex flex-wrap justify-center gap-8">
           <div
             v-for="(topic, index) in topics"
@@ -14,7 +16,7 @@
               :class="topic.hoverClasses"
             >
               <component
-                :is="getIcon(topic.icon)"
+                :is="topic.icon"
                 class="topic-icon"
                 :class="topic.iconHoverClass"
               />
@@ -28,40 +30,40 @@
 </template>
 
 <script setup lang="ts">
+import type { Component } from 'vue'
 import { Network, HardDrive, Cloud } from '@lucide/vue'
 
-const topics = [
+type Topic = {
+  icon: Component
+  label: string
+  hoverClasses: string
+  iconHoverClass: string
+  labelColor: string
+}
+
+const topics: Topic[] = [
   {
-    icon: "network",
+    icon: Network,
     label: "L1-L3",
     hoverClasses: "hover-primary",
     iconHoverClass: "icon-hover-primary",
     labelColor: "label-primary"
   },
   {
-    icon: "hard-drive",
+    icon: HardDrive,
     label: "Storage",
     hoverClasses: "hover-secondary",
     iconHoverClass: "icon-hover-secondary",
     labelColor: "label-secondary"
   },
   {
-    icon: "cloud",
+    icon: Cloud,
     label: "Cloud",
     hoverClasses: "hover-primary",
     iconHoverClass: "icon-hover-primary",
     labelColor: "label-primary"
   }
-]
-
-const getIcon = (iconName: string) => {
-  const icons: Record<string, any> = {
-    network: Network,
-    'hard-drive': HardDrive,
-    cloud: Cloud
-  }
-  return icons[iconName]
-}
+] satisfies Topic[]
 </script>
 
 <style scoped>

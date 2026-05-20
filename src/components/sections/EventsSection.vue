@@ -5,7 +5,9 @@
         <div class="glass-panel bracket w-full">
           <div class="flex items-center gap-4 mb-6">
             <span class="font-mono text-4xl primary-text opacity-50">03</span>
-            <h2 class="text-3xl font-bold main-text">Recent Events</h2>
+            <h2 class="text-3xl font-bold main-text">
+              Recent Events
+            </h2>
           </div>
           <ul class="space-y-4 font-mono text-sm">
             <li
@@ -14,9 +16,15 @@
               class="pl-4 py-1"
               :class="event.borderColor"
             >
-              <div class="muted-text text-xs">{{ event.date }}</div>
-              <div class="main-text font-bold">{{ event.title }}</div>
-              <div class="muted-text text-xs mt-1">{{ event.description }}</div>
+              <div class="muted-text text-xs">
+                {{ event.date }}
+              </div>
+              <div class="main-text font-bold">
+                {{ event.title }}
+              </div>
+              <div class="muted-text text-xs mt-1">
+                {{ event.description }}
+              </div>
             </li>
           </ul>
         </div>

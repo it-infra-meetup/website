@@ -1,17 +1,17 @@
 <template>
   <div class="bg-container">
-    <div class="data-stream-bg" ref="containerRef">
-      <svg ref="svgRef" id="stream-svg" preserveAspectRatio="xMidYMin slice">
+    <div ref="containerRef" class="data-stream-bg">
+      <svg id="stream-svg" ref="svgRef" preserveAspectRatio="xMidYMin slice">
         <defs>
           <filter id="packet-glow">
-            <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+            <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
             <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
         </defs>
-        <g ref="groupRef" id="stream-group"></g>
+        <g id="stream-group" ref="groupRef" />
       </svg>
     </div>
   </div>
@@ -91,10 +91,9 @@ const handleResize = () => {
   resizeTimer = window.setTimeout(updatePaths, 200)
 }
 
-onMounted(() => {
-  nextTick(() => {
-    updatePaths()
-  })
+onMounted(async () => {
+  await nextTick()
+  updatePaths()
   window.addEventListener('resize', handleResize)
 })
 

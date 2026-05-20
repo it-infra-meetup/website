@@ -3,30 +3,38 @@
     <div class="content-wrapper">
       <div class="content-center w-full">
         <div class="mb-8">
-          <h2 class="text-3xl font-bold main-text inline-block border-b-2 border-primary pb-2">集会の様子</h2>
-          <p class="font-mono text-xs primary-text mt-1">Status: Active Gathering</p>
+          <h2 class="text-3xl font-bold main-text inline-block border-b-2 border-primary pb-2">
+            集会の様子
+          </h2>
+          <p class="font-mono text-xs primary-text mt-1">
+            Status: Active Gathering
+          </p>
         </div>
 
         <div class="atmosphere-container">
           <div
-              v-for="(item, index) in atmosphereItems"
-              :key="index"
-              class="atmosphere-card glass-panel hover:bg-white/80 transition-colors text-left"
+            v-for="(item, index) in atmosphereItems"
+            :key="index"
+            class="atmosphere-card glass-panel hover:bg-white/80 transition-colors text-left"
           >
-            <img class="mb-4" alt="" :src="item.img"/>
+            <img class="mb-4" alt="" :src="item.img">
             <div class="flex gap-2">
-            <component
-                :is="getIcon(item.icon)"
+              <component
+                :is="item.icon"
                 :class="item.iconColor"
                 class="mb-2"
-            />
-            <h3 class="font-bold main-text mb-1">{{ item.title }}</h3>
+              />
+              <h3 class="font-bold main-text mb-1">
+                {{ item.title }}
+              </h3>
             </div>
-            <p class="text-xs muted-text">{{ item.description }}</p>
+            <p class="text-xs muted-text">
+              {{ item.description }}
+            </p>
             <RouterLink
-                v-if="item.link"
-                :to="item.link"
-                class="lt-link"
+              v-if="item.link"
+              :to="item.link"
+              class="lt-link"
             >
               {{ item.linkText }}
               <ArrowRight class="w-4 h-4" />
@@ -36,12 +44,12 @@
         <!-- スマホ用ドットインジケーター -->
         <div class="scroll-indicator">
           <button
-              v-for="(item, index) in atmosphereItems"
-              :key="index"
-              class="indicator-dot"
-              :class="{ active: currentIndex === index }"
-              @click="scrollToCard(index)"
-              :aria-label="`${item.title}へ移動`"
+            v-for="(item, index) in atmosphereItems"
+            :key="index"
+            class="indicator-dot"
+            :class="{ active: currentIndex === index }"
+            :aria-label="`${item.title}へ移動`"
+            @click="scrollToCard(index)"
           />
         </div>
       </div>
@@ -50,6 +58,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Component } from 'vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { Users, Server, MonitorPlay, ArrowRight } from '@lucide/vue'
@@ -59,23 +68,33 @@ const containerRef = ref<HTMLElement | null>(null)
 
 const baseUrl = import.meta.env.BASE_URL
 
+type AtmosphereItem = {
+  icon: Component
+  title: string
+  description: string
+  iconColor: string
+  img: string
+  link?: string
+  linkText?: string
+}
+
 const atmosphereItems = [
   {
-    icon: "users",
+    icon: Users,
     title: "交流",
     description: "ワールドに配置されているタグを使って話したい同じ技術や気になる技術をさわっている人と話そう。最近の技術トレンドや障害対応大変だった！でもOK!",
     iconColor: "icon-primary",
     img: `${baseUrl}it-infra-lt.png`
   },
   {
-    icon: "server",
+    icon: Server,
     title: "機材",
     description: "QVペンを使って3D空間に配線をして議論したり、実際に機材を見せ合ったりして交流します。",
     iconColor: "icon-secondary",
     img: `${baseUrl}it-infra-writing.png`
   },
   {
-    icon: "monitor-play",
+    icon: MonitorPlay,
     title: "LT",
     description: "スクリーンを使ったライトニングトークが開催されます。有志の登壇希望者がITインフラに関連するLTをします！",
     iconColor: "icon-primary",
@@ -83,16 +102,7 @@ const atmosphereItems = [
     link: "/lt-list",
     linkText: "LT一覧を見る"
   }
-]
-
-const getIcon = (iconName: string) => {
-  const icons: Record<string, any> = {
-    users: Users,
-    server: Server,
-    'monitor-play': MonitorPlay
-  }
-  return icons[iconName]
-}
+] satisfies AtmosphereItem[]
 
 // スクロール位置から現在のインデックスを計算
 const handleScroll = () => {

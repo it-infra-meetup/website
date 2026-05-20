@@ -1,13 +1,15 @@
 <template>
-  <DataStreamBackground/>
+  <DataStreamBackground />
 
   <!-- Navigation -->
   <nav class="nav-bar">
     <RouterLink to="/" class="nav-link">
-      <ArrowLeft class="w-4 h-4"/>
+      <ArrowLeft class="w-4 h-4" />
       BACK TO TOP
     </RouterLink>
-    <div class="font-mono text-xs text-primary">ARCHIVE_MODE: ONLINE</div>
+    <div class="font-mono text-xs text-primary">
+      ARCHIVE_MODE: ONLINE
+    </div>
   </nav>
 
   <!-- Main Content -->
@@ -23,7 +25,7 @@
             過去開催されたLT一覧です
           </p>
           <a href="https://forms.gle/TrvBXq5chjtLiD7s5" class="apply-btn">
-            <ExternalLink class="w-4 h-4"/>
+            <ExternalLink class="w-4 h-4" />
             LTを申込む！
           </a>
         </div>
@@ -32,22 +34,22 @@
       <!-- LT Grid -->
       <div class="archive-grid">
         <LtCard
-            v-for="lt in paginatedItems"
-            :key="lt.id"
-            :date="lt.date"
-            :title="lt.title"
-            :author="lt.author"
-            :image="lt.image"
+          v-for="lt in paginatedItems"
+          :key="lt.id"
+          :date="lt.date"
+          :title="lt.title"
+          :author="lt.author"
+          :image="lt.image"
         />
       </div>
 
-      <!-- Pagination -->
-      <Pagination
-          :current-page="currentPage"
-          :total-pages="totalPages"
-          @prev="prevPage"
-          @next="nextPage"
-          @go-to-page="goToPage"
+      <!-- UIPagination -->
+      <UIPagination
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @prev="prevPage"
+        @next="nextPage"
+        @go-to-page="goToPage"
       />
 
       <div class="mt-8 text-center">
@@ -66,7 +68,7 @@ import {ArrowLeft, ExternalLink} from '@lucide/vue'
 import {lts} from '@/consts'
 import DataStreamBackground from '@/components/layout/DataStreamBackground.vue'
 import LtCard from '@/components/lt/LtCard.vue'
-import Pagination from '@/components/ui/Pagination.vue'
+import UIPagination from '@/components/ui/UIPagination.vue'
 
 // ページネーション設定
 const ITEMS_PER_PAGE = 18

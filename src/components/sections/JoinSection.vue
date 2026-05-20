@@ -3,19 +3,21 @@
     <div class="content-wrapper">
       <div class="content-center w-full">
         <div class="glass-panel join-panel max-w-2xl">
-          <h2 class="text-4xl md:text-6xl font-bold main-text mb-6">JOIN US</h2>
+          <h2 class="text-4xl md:text-6xl font-bold main-text mb-6">
+            JOIN US
+          </h2>
           <p class="muted-text mb-8">
             VRChatの世界で、あなたの接続を待っています。
           </p>
           <a
-              href="https://vrchat.com/home/group/grp_caa820c4-7aa6-48bc-a7bc-593376245419"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="join-button"
+            href="https://vrchat.com/home/group/grp_caa820c4-7aa6-48bc-a7bc-593376245419"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="join-button"
           >
             <span class="flex items-center gap-2">
               CONNECT TO VRCHAT
-              <ExternalLink class="w-3 h-3"/>
+              <ExternalLink class="w-3 h-3" />
             </span>
           </a>
         </div>

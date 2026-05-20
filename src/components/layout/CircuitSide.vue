@@ -28,11 +28,10 @@ const debouncedResize = () => {
   resizeTimer = window.setTimeout(handleResize, 200)
 }
 
-onMounted(() => {
+onMounted(async () => {
   // DOMが完全にレンダリングされてからdimensionsを取得
-  nextTick(() => {
-    handleResize()
-  })
+  await nextTick()
+  handleResize()
   window.addEventListener('resize', debouncedResize)
 })
 

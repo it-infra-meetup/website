@@ -81,7 +81,7 @@ export function useScrollAnimations(
   })
 
   // 4. サブパケット（自動ループアニメーション）
-  const subPaths = Array.from(document.querySelectorAll('.circuit-path-sub')) as SVGPathElement[]
+  const subPaths = Array.from(document.querySelectorAll<SVGPathElement>('.circuit-path-sub'))
   subPaths.forEach((pathEl) => {
     const pkt = createPacket(20, 3, "#005577", "packet-glow-sub")
     group.appendChild(pkt)
