@@ -109,6 +109,7 @@
 
 <script setup lang="ts">
 import {ref, onMounted} from 'vue'
+import {fetchPublicIp} from '@/clients/ipify'
 
 const baseUrl = import.meta.env.BASE_URL
 
@@ -136,11 +137,11 @@ const joinSteps: JoinStep[] = [
 
 const connectionId = ref('0x-----')
 
-// IP文字列から簡易ハッシュを生成
-const hashIp = (ip: string): string => {
+// 文字列から簡易ハッシュを生成
+const hashToConnectionId = (source: string): string => {
   let hash = 0
-  for (let i = 0; i < ip.length; i++) {
-    const char = ip.charCodeAt(i)
+  for (let i = 0; i < source.length; i++) {
+    const char = source.charCodeAt(i)
     hash = ((hash << 5) - hash) + char
     hash = hash & hash // 32bit整数に変換
   }
@@ -149,15 +150,17 @@ const hashIp = (ip: string): string => {
   return `0x${hex}`
 }
 
+const randomConnectionId = (): string => {
+  const randomHex = Math.floor(Math.random() * 0xFFFFF).toString(16).toUpperCase().padStart(5, '0')
+  return `0x${randomHex}`
+}
+
 onMounted(async () => {
   try {
-    const response = await fetch('https://api.ipify.org?format=json')
-    const data = await response.json()
-    connectionId.value = hashIp(data.ip)
+    const ip = await fetchPublicIp()
+    connectionId.value = hashToConnectionId(ip)
   } catch {
-    // エラー時はランダムなIDを生成
-    const randomHex = Math.floor(Math.random() * 0xFFFFF).toString(16).toUpperCase().padStart(5, '0')
-    connectionId.value = `0x${randomHex}`
+    connectionId.value = randomConnectionId()
   }
 })
 </script>
