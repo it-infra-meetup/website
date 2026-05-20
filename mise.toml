@@ -5,6 +5,11 @@ node = "24"
 pnpm = "10"
 zizmor = "1.24.1"
 
+[settings]
+install_before = "3d"
+
+[hooks]
+postinstall = "lefthook install"
 
 [tasks."actions:zizmor"]
 description = "run zizmor security linter on GitHub Actions workflows"
