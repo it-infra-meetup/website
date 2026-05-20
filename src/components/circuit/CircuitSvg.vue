@@ -30,7 +30,7 @@ const circuitStore = useCircuitStore()
 const svgRef = ref<SVGSVGElement>()
 const groupRef = ref<SVGGElement>()
 
-const updatePaths = () => {
+const updatePaths = async () => {
   // dimensionsが設定されていない場合はスキップ
   if (circuitStore.screenWidth === 0 || circuitStore.screenHeight === 0) {
     return
@@ -82,12 +82,11 @@ const updatePaths = () => {
   })
 
   // パケット生成・アニメーション
-  nextTick(() => {
-    initScrollAnimations()
-  })
+  await nextTick()
+  await initScrollAnimations()
 }
 
-const initScrollAnimations = () => {
+const initScrollAnimations = async () => {
   const activePath = document.getElementById("active-path")
   if (!activePath || !groupRef.value) return
   if (!(activePath instanceof SVGPathElement)) return
@@ -95,24 +94,22 @@ const initScrollAnimations = () => {
   useScrollAnimations(activePath, groupRef.value, circuitStore.totalHeight)
 
   // ScrollTriggerを確実に初期化・更新
-  nextTick(() => {
-    ScrollTrigger.refresh()
-  })
+  await nextTick()
+  ScrollTrigger.refresh()
 }
 
 // dimensionsが更新されたらパスを再生成
 watch(
   () => circuitStore.screenWidth,
-  () => {
+  async () => {
     if (circuitStore.screenWidth > 0 && circuitStore.screenHeight > 0) {
       // 既存アニメーション削除
       ScrollTrigger.getAll().forEach(t => t.kill())
       // パス再生成
-      updatePaths()
+      await updatePaths()
       // ScrollTriggerを更新
-      nextTick(() => {
-        ScrollTrigger.refresh()
-      })
+      await nextTick()
+      ScrollTrigger.refresh()
     }
   }
 )
@@ -123,19 +120,19 @@ const handleResize = () => {
   if (resizeTimer !== null) {
     clearTimeout(resizeTimer)
   }
-  resizeTimer = window.setTimeout(() => {
+  resizeTimer = window.setTimeout(async () => {
     // 既存アニメーション削除
     ScrollTrigger.getAll().forEach(t => t.kill())
 
     // パス再生成
-    updatePaths()
+    await updatePaths()
   }, 200)
 }
 
-onMounted(() => {
+onMounted(async () => {
   // 初回マウント時にdimensionsがあれば生成
   if (circuitStore.screenWidth > 0 && circuitStore.screenHeight > 0) {
-    updatePaths()
+    await updatePaths()
   }
   window.addEventListener('resize', handleResize)
 })

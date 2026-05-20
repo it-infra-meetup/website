@@ -51,14 +51,15 @@ const inputEl = ref<HTMLInputElement>()
 const termWindow = ref<HTMLDivElement>()
 const currentInput = ref('')
 
-const handleCommand = () => {
+const handleCommand = async () => {
   const cmd = currentInput.value.trim()
   if (cmd) {
     terminalStore.addOutput(`<span class="prompt">guest@infra:~$</span> ${cmd}`, '')
     terminalStore.executeCommand(cmd)
   }
   currentInput.value = ''
-  nextTick(() => scrollToBottom())
+  await nextTick()
+  scrollToBottom()
 }
 
 const scrollToBottom = () => {
@@ -71,10 +72,9 @@ const focusInput = () => {
   inputEl.value?.focus()
 }
 
-onMounted(() => {
-  nextTick(() => {
-    focusInput()
-  })
+onMounted(async () => {
+  await nextTick()
+  focusInput()
 })
 </script>
 

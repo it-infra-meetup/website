@@ -91,10 +91,9 @@ const handleResize = () => {
   resizeTimer = window.setTimeout(updatePaths, 200)
 }
 
-onMounted(() => {
-  nextTick(() => {
-    updatePaths()
-  })
+onMounted(async () => {
+  await nextTick()
+  updatePaths()
   window.addEventListener('resize', handleResize)
 })
 
