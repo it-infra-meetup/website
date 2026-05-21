@@ -8,15 +8,6 @@
   <!-- Background Layer (Split Screen) -->
   <SplitBackground />
 
-  <!-- VRC TA Hub upcoming events badge -->
-  <p
-    v-if="eventsBadge"
-    class="fixed bottom-4 right-4 z-40 text-xs font-mono text-slate-400 bg-black/40 px-3 py-1 rounded-full pointer-events-none"
-    data-testid="events-badge"
-  >
-    {{ eventsBadge }}
-  </p>
-
   <!-- Main Content -->
   <main>
     <HeroSection />
@@ -29,7 +20,6 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
 import LoadingScreen from '@/components/ui/LoadingScreen.vue'
 import NavigationOverlay from '@/components/layout/NavigationOverlay.vue'
 import SplitBackground from '@/components/layout/SplitBackground.vue'
@@ -39,19 +29,4 @@ import AtmosphereSection from '@/components/sections/AtmosphereSection.vue'
 import EventsSection from '@/components/sections/EventsSection.vue'
 import TopicsSection from '@/components/sections/TopicsSection.vue'
 import JoinSection from '@/components/sections/JoinSection.vue'
-import { useEventsStore } from '@/stores/eventsStore'
-
-const eventsStore = useEventsStore()
-
-onMounted(() => {
-  void eventsStore.loadNext()
-})
-
-const eventsBadge = computed(() => {
-  if (eventsStore.loading) return '読み込み中…'
-  if (eventsStore.error) return '次回開催: 取得失敗'
-  const ev = eventsStore.nextEvent
-  if (!ev) return '次回開催予定なし'
-  return `次回開催: ${ev.date} ${ev.start_time}`
-})
 </script>
