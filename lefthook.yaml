@@ -15,6 +15,11 @@ commit-msg:
     - name: commitlint
       run: pnpm run commitlint --edit {1}
 
+pre-push:
+  scripts:
+    "block-push-to-main.sh":
+      runner: sh
+
 post-checkout:
   parallel: true
   jobs:
