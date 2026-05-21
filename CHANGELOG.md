@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/it-infra-meetup/website/compare/v1.2.0...v1.3.0) (2026-05-21)
+
+
+### Features
+
+* **infra:** convert to pnpm monorepo (apps/website + packages/*) ([#6](https://github.com/it-infra-meetup/website/issues/6)) ([ad50db1](https://github.com/it-infra-meetup/website/commit/ad50db191e132bf1dd174b5f2a61877e714af4dd))
+
 # [1.2.0](https://github.com/it-infra-meetup/website/compare/v1.1.0...v1.2.0) (2026-05-20)
 
 
