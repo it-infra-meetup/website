@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/it-infra-meetup/website/compare/v1.7.0...v1.8.0) (2026-05-21)
+
+
+### Features
+
+* **frontend:** show recent LTs from /api/v1/event_detail ([#12](https://github.com/it-infra-meetup/website/issues/12)) ([45397c3](https://github.com/it-infra-meetup/website/commit/45397c31a75ae63cafc6afa3104257eb331e1fdf))
+
 # [1.7.0](https://github.com/it-infra-meetup/website/compare/v1.6.0...v1.7.0) (2026-05-21)
 
 
