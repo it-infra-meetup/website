@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/it-infra-meetup/website/compare/v1.3.0...v1.4.0) (2026-05-21)
+
+
+### Features
+
+* **vrc-ta-hub-client:** scaffold package and capture fixtures ([#7](https://github.com/it-infra-meetup/website/issues/7)) ([005511e](https://github.com/it-infra-meetup/website/commit/005511ecd7e49bae2e9899f8990240f614f99ab8))
+
 # [1.3.0](https://github.com/it-infra-meetup/website/compare/v1.2.0...v1.3.0) (2026-05-21)
 
 
