@@ -1,5 +1,5 @@
 import { resolve } from 'node:path'
-import { API_BASE_URL, FIXTURES_DIR, SCHEMA_URL, fetchText, writeFileEnsuringDir } from './lib.js'
+import { API_BASE_URL, FIXTURES_DIR, SCHEMA_URL, fetchText, writeFileEnsuringDir } from './lib.ts'
 
 const PUBLIC_ENDPOINTS: { name: string; path: string }[] = [
   { name: 'community.json',    path: '/api/v1/community/?format=json' },

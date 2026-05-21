@@ -570,18 +570,23 @@ EOF
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "fixtures:refresh": "tsx scripts/refresh-fixtures.ts"
+    "fixtures:refresh": "node scripts/refresh-fixtures.ts"
   },
   "dependencies": {
     "zod": "^4.4.0"
   },
   "devDependencies": {
-    "tsx": "^4.19.0",
     "typescript": "6.0.3",
     "vitest": "^2.1.0"
   }
 }
 ```
+
+Note: no `tsx` dependency. Node 24 (pinned via `mise.toml`) strips
+TypeScript types natively, so `node scripts/foo.ts` runs `.ts` source
+directly. The tsconfig below enables `allowImportingTsExtensions` so
+scripts can import each other with explicit `.ts` extensions (required at
+runtime — native node won't remap `.js` → `.ts`).
 
 - [ ] **Step 2: Write `tsconfig.json`**
 
@@ -601,10 +606,11 @@ EOF
     "resolveJsonModule": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true,
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src/**/*", "tests/**/*", "scripts/**/*"]
+  "include": ["src/**/*", "tests/**/*", "scripts/**/*", "*.config.ts", "*.config.mts"]
 }
 ```
 
@@ -725,7 +731,7 @@ export async function fetchText(url: string): Promise<string> {
 
 ```ts
 import { resolve } from 'node:path'
-import { API_BASE_URL, FIXTURES_DIR, SCHEMA_URL, fetchText, writeFileEnsuringDir } from './lib.js'
+import { API_BASE_URL, FIXTURES_DIR, SCHEMA_URL, fetchText, writeFileEnsuringDir } from './lib.ts'
 
 const PUBLIC_ENDPOINTS: { name: string; path: string }[] = [
   { name: 'community.json',    path: '/api/v1/community/?format=json' },
