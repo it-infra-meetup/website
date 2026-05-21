@@ -4,6 +4,10 @@ import { createClient, isOk, isErr, type ClientError } from '@vrc-ta-hub/client'
 
 const client = createClient()
 
+/** VRC TA Hub community id for ITインフラ集会. The API has no community-id
+ *  filter (only `name` icontains), so we fetch and filter client-side. */
+const IT_INFRA_COMMUNITY_ID = 30
+
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10)
 }
@@ -25,7 +29,7 @@ export const useEventsStore = defineStore('events', () => {
     const result = await client.listEvents({ start_date: todayIso() })
     loading.value = false
     if (isOk(result)) {
-      count.value = result.data.length
+      count.value = result.data.filter((e) => e.community.id === IT_INFRA_COMMUNITY_ID).length
       return
     }
     if (isErr(result) && result.error.kind === 'network' && result.error.aborted) {
