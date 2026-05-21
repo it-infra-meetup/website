@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/it-infra-meetup/website/compare/v1.6.0...v1.7.0) (2026-05-21)
+
+
+### Features
+
+* **vrc-ta-hub-client:** support /api/v1/event/?community=<id> ([e7fd348](https://github.com/it-infra-meetup/website/commit/e7fd3483ae7efb550f73e3b7704c6a6c6c4b2f4b))
+
 # [1.6.0](https://github.com/it-infra-meetup/website/compare/v1.5.0...v1.6.0) (2026-05-21)
 
 
