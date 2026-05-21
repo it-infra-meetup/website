@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/it-infra-meetup/website/compare/v1.4.0...v1.5.0) (2026-05-21)
+
+
+### Features
+
+* **vrc-ta-hub-client:** implement zod v4 schemas + Result-returning fetch client ([#9](https://github.com/it-infra-meetup/website/issues/9)) ([694b1f4](https://github.com/it-infra-meetup/website/commit/694b1f474fe31bfdab5c0e6bb06ec712ef6ccc54))
+
 # [1.4.0](https://github.com/it-infra-meetup/website/compare/v1.3.0...v1.4.0) (2026-05-21)
 
 
