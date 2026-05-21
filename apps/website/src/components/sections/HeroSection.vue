@@ -8,6 +8,7 @@
           </div>
           <img :src="`${baseUrl}ITlnfra.png`">
         </div>
+        <NextEventCard />
       </div>
       <div class="content-right flex flex-col items-end justify-center z-10">
         <div class="glass-panel p-8 max-w-md w-full text-left relative overflow-hidden group">
@@ -110,6 +111,7 @@
 <script setup lang="ts">
 import {ref, onMounted} from 'vue'
 import {fetchPublicIp} from '@/clients/ipify'
+import NextEventCard from '@/components/sections/NextEventCard.vue'
 
 const baseUrl = import.meta.env.BASE_URL
 
