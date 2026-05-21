@@ -36,6 +36,13 @@
   remap `.js` → `.ts` the way `tsx` does. This removes a build-tool
   dependency and matches the runtime exactly.
 
+- **2026-05-21 (post-Phase 4):** Upstream API gained a `community` query
+  param on `/api/v1/event/?community=<id>` (exact integer match), at our
+  request. `ListEventsParams` exposes `community?: number`; the frontend
+  store now filters by id (`community: 30`) instead of by name icontains
+  (`name: 'ITインフラ集会'`). The `name` filter remains supported for
+  callers that need substring matching.
+
 ## 1. Purpose
 
 Provide a pure-TypeScript, zod-validated client for the **public read-only** subset
@@ -71,7 +78,7 @@ Authoritative OpenAPI schema: `https://vrc-ta-hub.com/api/schema/`
 |----------------------------------|--------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
 | `GET /api/v1/community/`         | `Community[]` (flat JSON array, no pagination wrapper) | `name` (icontains), `weekdays` (contains)                                                                                    |
 | `GET /api/v1/community/{id}/`    | `Community`                                            | —                                                                                                                            |
-| `GET /api/v1/event/`             | `Event[]` (flat array, today-onward)                   | `name` (community__name icontains), `weekday`, `start_date` (gte), `end_date` (lte)                                          |
+| `GET /api/v1/event/`             | `Event[]` (flat array, today-onward)                   | `community` (community id, exact match), `name` (community__name icontains), `weekday`, `start_date` (gte), `end_date` (lte) |
 | `GET /api/v1/event/{id}/`        | `Event`                                                | —                                                                                                                            |
 | `GET /api/v1/event_detail/`      | `EventDetail[]` (flat array)                           | `theme` (icontains), `speaker` (icontains), `start_date` (event__date gte), `end_date` (lte), `start_time` (exact, HH:MM:SS) |
 | `GET /api/v1/event_detail/{id}/` | `EventDetail`                                          | —                                                                                                                            |
@@ -291,6 +298,7 @@ export interface ListCommunitiesParams {
 }
 
 export interface ListEventsParams {
+    community?: number       // exact community id match (preferred)
     name?: string            // matches community__name icontains
     weekday?: WeekdaySymbol
     start_date?: string      // YYYY-MM-DD, gte

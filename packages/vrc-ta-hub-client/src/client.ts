@@ -26,6 +26,9 @@ export interface ListCommunitiesParams {
 }
 
 export interface ListEventsParams {
+  /** Community id (preferred filter — exact match, server-side integer). */
+  community?: number
+  /** Community name icontains filter (server matches against community__name). */
   name?: string
   weekday?: WeekdaySymbol
   start_date?: string
@@ -136,7 +139,13 @@ export function createClient(options: ClientOptions = {}): Client {
     listEvents: (params = {}, opts) =>
       list<Event>(
         '/api/v1/event/',
-        { name: params.name, weekday: params.weekday, start_date: params.start_date, end_date: params.end_date },
+        {
+          community: params.community,
+          name: params.name,
+          weekday: params.weekday,
+          start_date: params.start_date,
+          end_date: params.end_date,
+        },
         z.array(Event),
         opts?.signal,
       ),

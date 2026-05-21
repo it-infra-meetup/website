@@ -10,9 +10,9 @@ import {
 
 const client = createClient()
 
-/** Community name used for server-side filtering (DRF `name` icontains
- *  against `community__name`). */
-const COMMUNITY_NAME = 'ITインフラ集会'
+/** VRC TA Hub community id for ITインフラ集会. Used for server-side
+ *  exact-match filtering on `/api/v1/event/?community=<id>`. */
+const IT_INFRA_COMMUNITY_ID = 30
 
 /** Window we look ahead for the next event. */
 const LOOKAHEAD_DAYS = 31
@@ -46,7 +46,7 @@ export const useEventsStore = defineStore('events', () => {
     loading.value = true
     error.value = null
     const result = await client.listEvents({
-      name: COMMUNITY_NAME,
+      community: IT_INFRA_COMMUNITY_ID,
       start_date: todayIso(),
       end_date: lookaheadIso(),
     })
