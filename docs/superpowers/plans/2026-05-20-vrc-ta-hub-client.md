@@ -148,7 +148,9 @@ Expected: no `src`, `public`, `index.html`, `vite.config.ts`, `tsconfig*.json`, 
     "dev:host": "vite --host",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "typecheck": "vue-tsc -b --noEmit"
+    "typecheck": "vue-tsc -b --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@lucide/vue": "1.16.0",
@@ -163,6 +165,7 @@ Expected: no `src`, `public`, `index.html`, `vite.config.ts`, `tsconfig*.json`, 
     "@vitejs/plugin-vue": "6.0.7",
     "@vue/tsconfig": "0.9.1",
     "autoprefixer": "10.5.0",
+    "eslint-plugin-vue": "^10.9.1",
     "postcss": "8.5.14",
     "tailwindcss": "4.3.0",
     "vite": "8.0.13",
@@ -171,7 +174,8 @@ Expected: no `src`, `public`, `index.html`, `vite.config.ts`, `tsconfig*.json`, 
 }
 ```
 
-`@vrc-ta-hub/client` is NOT listed yet — Phase 4 adds it.
+`@vrc-ta-hub/client` is NOT listed yet — Phase 4 adds it. `eslint-plugin-vue`
+lives here (not at root) because only the Vue app needs it.
 
 ### Task 1.4 — Replace root `package.json` with a workspace shell
 
@@ -191,8 +195,8 @@ Expected: no `src`, `public`, `index.html`, `vite.config.ts`, `tsconfig*.json`, 
     "dev": "pnpm --filter website dev",
     "build": "pnpm -r --filter \"./apps/*\" --filter \"./packages/*\" build",
     "build:website": "pnpm --filter website build",
-    "lint": "eslint . --cache --cache-strategy content --cache-location ./node_modules/.tmp/eslintcache",
-    "lint:fix": "eslint . --cache --cache-strategy content --cache-location ./node_modules/.tmp/eslintcache --fix",
+    "lint": "pnpm -r lint && eslint --no-error-on-unmatched-pattern '*.config.{ts,mjs,js}'",
+    "lint:fix": "pnpm -r lint:fix && eslint --fix --no-error-on-unmatched-pattern '*.config.{ts,mjs,js}'",
     "test": "pnpm -r --filter \"./packages/*\" test",
     "typecheck": "pnpm -r --filter \"./packages/*\" --filter \"./apps/*\" typecheck",
     "fixtures:refresh": "pnpm --filter @vrc-ta-hub/client fixtures:refresh",
@@ -207,7 +211,6 @@ Expected: no `src`, `public`, `index.html`, `vite.config.ts`, `tsconfig*.json`, 
     "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^10.0.1",
     "eslint": "^10.4.0",
-    "eslint-plugin-vue": "^10.9.1",
     "globals": "^17.6.0",
     "jiti": "^2.7.0",
     "semantic-release": "^25.0.3",
@@ -224,30 +227,90 @@ Expected: no `src`, `public`, `index.html`, `vite.config.ts`, `tsconfig*.json`, 
 Run: `pnpm install`
 Expected: lockfile updates to reflect the new workspace topology (root + `apps/website` importers).
 
-### Task 1.6 — Update `eslint.config.ts`
+### Task 1.6 — Per-package ESLint configs
+
+We split ESLint into one config per workspace package plus a minimal root
+config. Each package owns its own lint rules; the root only lints its own
+config files (`release.config.mjs`, `commitlint.config.mjs`,
+`eslint.config.ts` itself). `eslint`, `@eslint/js`, `typescript-eslint`,
+`jiti`, `globals` stay at the root (hoisted to children); `eslint-plugin-vue`
+is local to `apps/website/` (already moved there in Task 1.3).
 
 **Files:**
-- Modify: `eslint.config.ts`
+- Modify: `eslint.config.ts` (at repo root) — shrink to root-only scope
+- Create: `apps/website/eslint.config.ts`
+- Create: a fresh root `tsconfig.json` if not already present — it must cover
+  `*.config.{ts,mjs,js}` so `projectService` resolves
+- Verify: `apps/website/tsconfig.app.json` already covers
+  `eslint.config.ts` via `include` (the `*.config.ts` glob inside the app);
+  if not, the app's tsconfig needs adjustment
 
-- [ ] **Step 1: Rewrite the file**
+- [ ] **Step 1: Rewrite the root `eslint.config.ts`**
 
 ```ts
 import js from "@eslint/js";
+import tseslint from "typescript-eslint";
 import globals from "globals";
+import { defineConfig } from "eslint/config";
+
+export default defineConfig([
+  js.configs.recommended,
+  tseslint.configs.recommendedTypeChecked,
+  {
+    ignores: ["**/dist/**", "**/node_modules/**", "apps/**", "packages/**"],
+  },
+  {
+    files: ["*.config.{ts,mjs,js}"],
+    languageOptions: {
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+      globals: { ...globals.nodeBuiltin },
+    },
+  },
+]);
+```
+
+- [ ] **Step 2: Ensure root `tsconfig.json` covers root configs**
+
+The root needs a tsconfig that includes `*.config.{ts,mjs,js}` so ESLint's
+`projectService` can typecheck them. If `tsconfig.json` does not already exist
+at the repo root (the original was moved into `apps/website/`), create it:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ESNext"],
+    "types": ["node"],
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowJs": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force"
+  },
+  "include": ["*.config.js", "*.config.mjs", "*.config.ts", "*.config.mts"]
+}
+```
+
+- [ ] **Step 3: Create `apps/website/eslint.config.ts`**
+
+```ts
+import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import pluginVue from "eslint-plugin-vue";
+import globals from "globals";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
   js.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
   pluginVue.configs["flat/recommended"],
-  {
-    ignores: ["**/dist/**", "**/node_modules/**"],
-  },
+  { ignores: ["dist/**", "node_modules/**"] },
   {
     languageOptions: {
-      parserOptions: { projectService: true },
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
       globals: { ...globals.browser },
     },
     rules: { "no-undef": "off" },
@@ -258,6 +321,7 @@ export default defineConfig([
       parserOptions: {
         extraFileExtensions: [".vue"],
         projectService: true,
+        tsconfigRootDir: import.meta.dirname,
         parser: tseslint.parser,
       },
     },
@@ -269,27 +333,30 @@ export default defineConfig([
     },
   },
   {
-    files: [
-      "./*.config.{ts,mjs,js}",
-      "apps/*/*.config.{ts,mjs,js}",
-      "packages/*/*.config.{ts,mjs,js}",
-    ],
+    files: ["*.config.{ts,mjs,js}"],
     languageOptions: {
-      parserOptions: { projectService: true },
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
       globals: { ...globals.nodeBuiltin },
     },
-  },
-  {
-    files: ["packages/*/tests/**", "packages/*/scripts/**"],
-    rules: { "no-console": "off" },
   },
 ]);
 ```
 
-- [ ] **Step 2: Run lint**
+`packages/vrc-ta-hub-client/eslint.config.ts` lands in Phase 2 (Task 2.1), after
+the package exists.
+
+- [ ] **Step 4: Run lint from both scopes**
+
+Run: `pnpm --filter website lint 2>&1 | tail -10`
+Expected: passes (may show pre-existing warnings in moved Vue code, but
+no new errors introduced by the eslint split).
+
+Run: `cd /Users/210408/priv/it-infra-website && pnpm exec eslint --no-error-on-unmatched-pattern '*.config.{ts,mjs,js}'`
+Expected: passes (root config-files lint cleanly).
 
 Run: `pnpm lint`
-Expected: passes.
+Expected: invokes `pnpm -r lint` (website) + the root config-files lint.
+Should pass.
 
 ### Task 1.7 — Update `commitlint.config.mjs`
 
@@ -483,6 +550,7 @@ EOF
 - Create: `packages/vrc-ta-hub-client/package.json`
 - Create: `packages/vrc-ta-hub-client/tsconfig.json`
 - Create: `packages/vrc-ta-hub-client/vitest.config.ts`
+- Create: `packages/vrc-ta-hub-client/eslint.config.ts`
 - Create: `packages/vrc-ta-hub-client/README.md`
 
 - [ ] **Step 1: Write `package.json`**
@@ -500,6 +568,8 @@ EOF
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "fixtures:refresh": "tsx scripts/refresh-fixtures.ts"
   },
   "dependencies": {
@@ -552,7 +622,32 @@ export default defineConfig({
 })
 ```
 
-- [ ] **Step 4: Write `README.md`**
+- [ ] **Step 4: Write `eslint.config.ts`**
+
+```ts
+import js from "@eslint/js";
+import tseslint from "typescript-eslint";
+import globals from "globals";
+import { defineConfig } from "eslint/config";
+
+export default defineConfig([
+  js.configs.recommended,
+  tseslint.configs.recommendedTypeChecked,
+  { ignores: ["dist/**", "node_modules/**"] },
+  {
+    languageOptions: {
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+      globals: { ...globals.nodeBuiltin },
+    },
+  },
+  {
+    files: ["tests/**", "scripts/**"],
+    rules: { "no-console": "off" },
+  },
+]);
+```
+
+- [ ] **Step 5: Write `README.md`**
 
 ```markdown
 # @vrc-ta-hub/client
@@ -571,7 +666,7 @@ See `docs/superpowers/specs/2026-05-20-vrc-ta-hub-client-design.md`.
 - `pnpm typecheck` — `tsc --noEmit`.
 ```
 
-- [ ] **Step 5: Install**
+- [ ] **Step 6: Install**
 
 Run: `pnpm install`
 Expected: installs `zod@^4.4.0`, `tsx`, `vitest`. Lockfile updated.
@@ -580,10 +675,18 @@ Verify zod v4 actually resolved:
 Run: `pnpm --filter @vrc-ta-hub/client list zod 2>&1 | grep "zod "`
 Expected: a line containing `zod 4.x.x` (NOT `3.x.x`).
 
-- [ ] **Step 6: Sanity-check that the package is discoverable**
+- [ ] **Step 7: Sanity-check that the package is discoverable**
 
 Run: `pnpm --filter @vrc-ta-hub/client exec node -e "console.log(process.cwd())"`
 Expected: prints `.../packages/vrc-ta-hub-client`.
+
+- [ ] **Step 8: Verify lint runs in the new package**
+
+Run: `pnpm --filter @vrc-ta-hub/client lint`
+Expected: passes (no source files yet, or a placeholder `src/index.ts` with `export {}`).
+
+Run: `pnpm lint` from the repo root.
+Expected: passes (runs website + client + root config-files lint).
 
 ### Task 2.2 — Refresh-fixtures script
 

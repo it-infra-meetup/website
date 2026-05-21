@@ -29,4 +29,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm build
+      - name: Test packages
+        run: pnpm test
+
+      - run: pnpm build:website

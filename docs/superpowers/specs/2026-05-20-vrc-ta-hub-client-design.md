@@ -17,6 +17,16 @@
   in `tests/__fixtures__/openapi.yaml` as a reference snapshot for future
   manual drift reviews.
 
+- **2026-05-21 (during Phase 1 implementation):** Switched ESLint from a
+  single root config to **per-package configs**. Each workspace package
+  (`apps/website/`, `packages/vrc-ta-hub-client/`) owns its own
+  `eslint.config.ts` reflecting its runtime (browser vs node), plugins
+  (`eslint-plugin-vue` only for the website), and rule overrides (e.g.,
+  `no-console` off in client tests/scripts). The root keeps a minimal
+  `eslint.config.ts` for root-level config files only. Reason: per-package
+  lint requirements diverge (Vue/browser globals vs Node-only client),
+  and root-level overrides leaked into unrelated packages.
+
 ## 1. Purpose
 
 Provide a pure-TypeScript, zod-validated client for the **public read-only** subset
@@ -95,6 +105,7 @@ exists but contains no `packages:` entry). The conversion moves the Vue app unde
 │     ├─ vite.config.ts           # was /vite.config.ts (alias '@' still → ./src)
 │     ├─ tsconfig.json, tsconfig.app.json, tsconfig.node.json
 │     ├─ tailwind.config.js, postcss.config.js
+│     ├─ eslint.config.ts         # Vue 3 + browser + plugin-vue
 │     └─ package.json             # name: "website", private, depends on workspace:* client
 ├─ packages/
 │  └─ vrc-ta-hub-client/
@@ -120,10 +131,11 @@ exists but contains no `packages:` entry). The conversion moves the Vue app unde
 │     │  └─ refresh-fixtures.ts   # hits public endpoints + /api/schema/, writes fixtures
 │     ├─ tsconfig.json
 │     ├─ vitest.config.ts
+│     ├─ eslint.config.ts         # Node + TS, console allowed in tests/scripts
 │     └─ package.json             # name: "@vrc-ta-hub/client", private
 ├─ aws/                           # unchanged
 ├─ .github/                       # workflow paths updated
-├─ eslint.config.ts               # extends globs, console-allowed in tests/scripts
+├─ eslint.config.ts               # root config files only (release/commitlint/eslint configs)
 ├─ commitlint.config.mjs          # adds `vrc-ta-hub-client` to scope-enum
 ├─ lefthook.yaml                  # unchanged
 ├─ release.config.mjs             # asset paths updated; single root release tag
@@ -500,8 +512,8 @@ website deps move into `apps/website/package.json`.
     "dev": "pnpm --filter website dev",
     "build": "pnpm -r --filter \"./apps/*\" --filter \"./packages/*\" build",
     "build:website": "pnpm --filter website build",
-    "lint": "eslint . --cache --cache-strategy content --cache-location ./node_modules/.tmp/eslintcache",
-    "lint:fix": "eslint . --cache --cache-strategy content --cache-location ./node_modules/.tmp/eslintcache --fix",
+    "lint": "pnpm -r lint && eslint --no-error-on-unmatched-pattern '*.config.{ts,mjs,js}'",
+    "lint:fix": "pnpm -r lint:fix && eslint --fix --no-error-on-unmatched-pattern '*.config.{ts,mjs,js}'",
     "test": "pnpm -r --filter \"./packages/*\" test",
     "typecheck": "pnpm -r --filter \"./packages/*\" --filter \"./apps/*\" typecheck",
     "fixtures:refresh": "pnpm --filter @vrc-ta-hub/client fixtures:refresh",
@@ -516,7 +528,6 @@ website deps move into `apps/website/package.json`.
     "@semantic-release/git": "^10.0.1",
     "@eslint/js": "^10.0.1",
     "eslint": "^10.4.0",
-    "eslint-plugin-vue": "^10.9.1",
     "globals": "^17.6.0",
     "jiti": "^2.7.0",
     "semantic-release": "^25.0.3",
@@ -539,7 +550,9 @@ website deps move into `apps/website/package.json`.
     "dev:host": "vite --host",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "typecheck": "vue-tsc -b --noEmit"
+    "typecheck": "vue-tsc -b --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@lucide/vue": "1.16.0",
@@ -555,6 +568,7 @@ website deps move into `apps/website/package.json`.
     "@vitejs/plugin-vue": "6.0.7",
     "@vue/tsconfig": "0.9.1",
     "autoprefixer": "10.5.0",
+    "eslint-plugin-vue": "^10.9.1",
     "postcss": "8.5.14",
     "tailwindcss": "4.3.0",
     "vite": "8.0.13",
@@ -577,6 +591,8 @@ website deps move into `apps/website/package.json`.
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "fixtures:refresh": "tsx scripts/refresh-fixtures.ts"
   },
   "dependencies": {
@@ -592,17 +608,120 @@ website deps move into `apps/website/package.json`.
 
 ### ESLint
 
-`eslint.config.ts` changes:
+ESLint is configured **per package** (revised — see "Amendments" above). Each
+workspace package owns its own `eslint.config.ts`; the root keeps a minimal
+one for root-level config files only.
 
-- Replace the existing `{ ignores: ['dist/**'] }` block with one that ignores
-  workspace `dist/` and `node_modules/`:
-  `{ ignores: ['**/dist/**', '**/node_modules/**'] }`.
-- Broaden the Node-globals override from `./*.config.{ts,mjs,js}` to also match
-  nested workspace config files: `['./*.config.{ts,mjs,js}', 'apps/*/*.config.{ts,mjs,js}', 'packages/*/*.config.{ts,mjs,js}']`.
-  Otherwise the new `apps/website/vite.config.ts` and `packages/vrc-ta-hub-client/vitest.config.ts`
-  won't get Node globals.
-- Add a test-file override so console logging in fixture tooling is allowed:
-  `{ files: ['packages/*/tests/**', 'packages/*/scripts/**'], rules: { 'no-console': 'off' } }`.
+**Root `eslint.config.ts`** — only lints root-level config files
+(`release.config.mjs`, `commitlint.config.mjs`, `eslint.config.ts` itself):
+
+```ts
+import js from "@eslint/js";
+import tseslint from "typescript-eslint";
+import globals from "globals";
+import { defineConfig } from "eslint/config";
+
+export default defineConfig([
+  js.configs.recommended,
+  tseslint.configs.recommendedTypeChecked,
+  {
+    ignores: ["**/dist/**", "**/node_modules/**", "apps/**", "packages/**"],
+  },
+  {
+    files: ["*.config.{ts,mjs,js}"],
+    languageOptions: {
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+      globals: { ...globals.nodeBuiltin },
+    },
+  },
+]);
+```
+
+**`apps/website/eslint.config.ts`** — Vue 3 + browser globals + plugin-vue:
+
+```ts
+import js from "@eslint/js";
+import tseslint from "typescript-eslint";
+import pluginVue from "eslint-plugin-vue";
+import globals from "globals";
+import { defineConfig } from "eslint/config";
+
+export default defineConfig([
+  js.configs.recommended,
+  tseslint.configs.recommendedTypeChecked,
+  pluginVue.configs["flat/recommended"],
+  { ignores: ["dist/**", "node_modules/**"] },
+  {
+    languageOptions: {
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+      globals: { ...globals.browser },
+    },
+    rules: { "no-undef": "off" },
+  },
+  {
+    files: ["**/*.vue"],
+    languageOptions: {
+      parserOptions: {
+        extraFileExtensions: [".vue"],
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+        parser: tseslint.parser,
+      },
+    },
+    rules: {
+      "vue/max-attributes-per-line": ["error", {
+        singleline: { max: 5 },
+        multiline:  { max: 5 },
+      }],
+    },
+  },
+  {
+    files: ["*.config.{ts,mjs,js}"],
+    languageOptions: {
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+      globals: { ...globals.nodeBuiltin },
+    },
+  },
+]);
+```
+
+**`packages/vrc-ta-hub-client/eslint.config.ts`** — Node + TS, no Vue,
+console allowed in tests/scripts. Added in Phase 2:
+
+```ts
+import js from "@eslint/js";
+import tseslint from "typescript-eslint";
+import globals from "globals";
+import { defineConfig } from "eslint/config";
+
+export default defineConfig([
+  js.configs.recommended,
+  tseslint.configs.recommendedTypeChecked,
+  { ignores: ["dist/**", "node_modules/**"] },
+  {
+    languageOptions: {
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+      globals: { ...globals.nodeBuiltin },
+    },
+  },
+  {
+    files: ["tests/**", "scripts/**"],
+    rules: { "no-console": "off" },
+  },
+]);
+```
+
+**Dependency layout:**
+
+- `eslint`, `@eslint/js`, `typescript-eslint`, `jiti`, `globals` stay at the
+  **root** devDeps; pnpm hoists them so each workspace config can `import`
+  them without listing them locally.
+- `eslint-plugin-vue` moves from root → `apps/website/devDeps` (only the
+  Vue app needs it).
+- Each workspace `package.json` gains a `"lint": "eslint ."` script.
+- Root `lint` script becomes
+  `"lint": "pnpm -r lint && eslint --no-error-on-unmatched-pattern '*.config.{ts,mjs,js}'"`
+  so the root config files are linted too.
 
 ### `release.config.mjs`
 
