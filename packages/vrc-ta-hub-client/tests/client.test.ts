@@ -13,12 +13,18 @@ function jsonResponse(body: unknown, init: ResponseInit = {}): Response {
   })
 }
 
+function urlOf(input: RequestInfo | URL): string {
+  if (typeof input === 'string') return input
+  if (input instanceof URL) return input.href
+  return input.url
+}
+
 describe('createClient', () => {
   it('listCommunities returns ok(data) and calls the right URL', async () => {
     const calls: { url: string; init?: RequestInit }[] = []
-    const fakeFetch: typeof fetch = async (input, init) => {
-      calls.push({ url: String(input), init })
-      return jsonResponse(communityFixture)
+    const fakeFetch: typeof fetch = (input, init) => {
+      calls.push({ url: urlOf(input), init })
+      return Promise.resolve(jsonResponse(communityFixture))
     }
 
     const client = createClient({ fetch: fakeFetch })
@@ -36,7 +42,7 @@ describe('createClient', () => {
 })
 
 function stubFetch(handler: (url: string, init?: RequestInit) => Promise<Response> | Response): typeof fetch {
-  return async (input, init) => handler(String(input), init)
+  return (input, init) => Promise.resolve(handler(urlOf(input), init))
 }
 
 describe('createClient — full surface', () => {
@@ -209,5 +215,23 @@ describe('createClient — full surface', () => {
     })
     await client.listCommunities()
     expect(seen[0]).toBe('https://staging.example.com/api/v1/community/?format=json')
+  })
+})
+
+import * as publicSurface from '../src/index'
+
+describe('public surface', () => {
+  it('exports createClient and Result helpers as functions', () => {
+    expect(typeof publicSurface.createClient).toBe('function')
+    expect(typeof publicSurface.ok).toBe('function')
+    expect(typeof publicSurface.err).toBe('function')
+    expect(typeof publicSurface.isOk).toBe('function')
+    expect(typeof publicSurface.isErr).toBe('function')
+  })
+
+  it('exports the zod schemas', () => {
+    expect(typeof publicSurface.Community.safeParse).toBe('function')
+    expect(typeof publicSurface.Event.safeParse).toBe('function')
+    expect(typeof publicSurface.EventDetail.safeParse).toBe('function')
   })
 })

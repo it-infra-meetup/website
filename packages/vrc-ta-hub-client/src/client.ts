@@ -74,7 +74,7 @@ async function request<T>(
   }
 
   if (!response.ok) {
-    let body: string | null = null
+    let body: string | null
     try {
       body = (await response.text()).slice(0, BODY_PREVIEW_CAP)
     } catch {
