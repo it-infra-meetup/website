@@ -1,0 +1,1061 @@
+openapi: 3.0.3
+info:
+  title: VRC技術学術系Hub API
+  version: 1.0.0
+  description: VRChat内で開催される技術・学術系イベントの情報を管理するAPI
+paths:
+  /api/v1/community/:
+    get:
+      operationId: v1_community_list
+      description: 承認済みでアクティブな集会の一覧を取得します。
+      summary: 集会一覧取得
+      parameters:
+      - in: query
+        name: name
+        schema:
+          type: string
+      - in: query
+        name: weekdays
+        schema:
+          type: string
+      tags:
+      - Community
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Community'
+          description: ''
+  /api/v1/community/{id}/:
+    get:
+      operationId: v1_community_retrieve
+      description: 指定IDの集会詳細情報を取得します。
+      summary: 集会詳細取得
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this 集会.
+        required: true
+      tags:
+      - Community
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Community'
+          description: ''
+  /api/v1/community/gathering-list/:
+    get:
+      operationId: v1_community_gathering_list_list
+      description: VRChat ワールド内の TaAGatheringListSys がそのまま読み込める JSON 形式で、承認済みかつアクティブな技術系・学術系集会の一覧を返します。
+      summary: TaAGatheringListSys向け集会一覧取得
+      parameters:
+      - in: query
+        name: name
+        schema:
+          type: string
+      - in: query
+        name: weekdays
+        schema:
+          type: string
+      tags:
+      - Community
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GatheringList'
+          description: ''
+  /api/v1/event/:
+    get:
+      operationId: v1_event_list
+      description: 今後開催予定のイベント一覧を取得します。
+      summary: イベント一覧取得
+      parameters:
+      - in: query
+        name: end_date
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: name
+        schema:
+          type: string
+      - in: query
+        name: start_date
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: weekday
+        schema:
+          type: string
+      tags:
+      - Event
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+          description: ''
+  /api/v1/event-details/:
+    get:
+      operationId: v1_event_details_list
+      description: 認証ユーザーのイベント詳細一覧を取得します。コミュニティオーナーは自分のイベントのみ、Superuserは全イベントを取得できます。
+      summary: イベント詳細一覧取得（認証必須）
+      parameters:
+      - in: header
+        name: Authorization
+        schema:
+          type: string
+        description: Bearer {APIキー} 形式で指定
+        required: true
+      tags:
+      - EventDetail API
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventDetail'
+          description: ''
+    post:
+      operationId: v1_event_details_create
+      description: 新しいイベント詳細を作成します。generate_from_pdfをtrueに設定し、slide_fileにPDFをアップロードすると内容が自動生成されます。
+      summary: イベント詳細作成
+      tags:
+      - EventDetail API
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EventDetailWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EventDetailWriteRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventDetailWriteRequest'
+            examples:
+              LT作成例:
+                value:
+                  event: 1
+                  detail_type: LT
+                  start_time: '20:00:00'
+                  duration: 30
+                  speaker: 発表者名
+                  theme: 発表テーマ
+                  h1: タイトル
+                  contents: 内容
+                  generate_from_pdf: false
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetailWrite'
+              examples:
+                LT作成例:
+                  value:
+                    event: 1
+                    detail_type: LT
+                    start_time: '20:00:00'
+                    duration: 30
+                    speaker: 発表者名
+                    theme: 発表テーマ
+                    h1: タイトル
+                    contents: 内容
+                    generate_from_pdf: false
+          description: ''
+  /api/v1/event-details/{id}/:
+    get:
+      operationId: v1_event_details_retrieve
+      description: 指定IDのイベント詳細を取得します。
+      summary: イベント詳細取得
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - EventDetail API
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetail'
+          description: ''
+    put:
+      operationId: v1_event_details_update
+      description: イベント詳細を更新します。
+      summary: イベント詳細更新
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - EventDetail API
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EventDetailWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EventDetailWriteRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventDetailWriteRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetailWrite'
+          description: ''
+    patch:
+      operationId: v1_event_details_partial_update
+      description: イベント詳細を部分的に更新します。
+      summary: イベント詳細部分更新
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - EventDetail API
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEventDetailWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEventDetailWriteRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEventDetailWriteRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetailWrite'
+          description: ''
+    delete:
+      operationId: v1_event_details_destroy
+      description: イベント詳細を削除します。
+      summary: イベント詳細削除
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - EventDetail API
+      responses:
+        '204':
+          description: No response body
+  /api/v1/event-details/my_events/:
+    get:
+      operationId: v1_event_details_my_events_retrieve
+      description: 認証ユーザーのコミュニティに紐づくイベント詳細一覧を取得します。
+      summary: 自分のイベント詳細一覧
+      tags:
+      - EventDetail API
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetailWrite'
+          description: ''
+  /api/v1/event/{id}/:
+    get:
+      operationId: v1_event_retrieve
+      description: 指定IDのイベント詳細情報を取得します。
+      summary: イベント詳細取得
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this イベント.
+        required: true
+      tags:
+      - Event
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: ''
+  /api/v1/event_detail/:
+    get:
+      operationId: v1_event_detail_list
+      description: 承認済み集会のイベント詳細一覧を取得します。
+      summary: イベント詳細一覧取得（公開）
+      parameters:
+      - in: query
+        name: end_date
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: speaker
+        schema:
+          type: string
+      - in: query
+        name: start_date
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: start_time
+        schema:
+          type: string
+          format: time
+      - in: query
+        name: theme
+        schema:
+          type: string
+      tags:
+      - EventDetail
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventDetail'
+          description: ''
+  /api/v1/event_detail/{id}/:
+    get:
+      operationId: v1_event_detail_retrieve
+      description: 指定IDのイベント詳細情報を取得します。
+      summary: イベント詳細取得（公開）
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this イベント詳細.
+        required: true
+      tags:
+      - EventDetail
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDetail'
+          description: ''
+  /api/v1/recurrence-preview/:
+    post:
+      operationId: v1_recurrence_preview_create
+      description: 定期ルールから日付リストをプレビュー生成
+      tags:
+      - v1
+      responses:
+        '200':
+          description: No response body
+  /api/v1/recurrence-rules/:
+    get:
+      operationId: v1_recurrence_rules_list
+      description: 定期イベントのルール一覧を取得します。
+      summary: 定期ルール一覧取得
+      parameters:
+      - in: header
+        name: Authorization
+        schema:
+          type: string
+        description: Bearer {APIキー} 形式で指定
+        required: true
+      tags:
+      - RecurrenceRule API
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecurrenceRule'
+          description: ''
+  /api/v1/recurrence-rules/{id}/:
+    get:
+      operationId: v1_recurrence_rules_retrieve
+      description: 指定IDの定期ルール詳細を取得します。
+      summary: 定期ルール詳細取得
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this 定期ルール.
+        required: true
+      tags:
+      - RecurrenceRule API
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurrenceRule'
+          description: ''
+    delete:
+      operationId: v1_recurrence_rules_destroy
+      description: 定期ルールを削除します。関連する未来のイベントも削除されます。
+      summary: 定期ルール削除
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this 定期ルール.
+        required: true
+      tags:
+      - RecurrenceRule API
+      responses:
+        '204':
+          description: No response body
+  /api/v1/recurrence-rules/{id}/delete_future_events/:
+    post:
+      operationId: v1_recurrence_rules_delete_future_events_create
+      description: 指定された定期ルールに関連する未来のイベントを削除します。
+      summary: 未来のイベントを削除
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this 定期ルール.
+        required: true
+      tags:
+      - RecurrenceRule API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecurrenceRuleDeleteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RecurrenceRuleDeleteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RecurrenceRuleDeleteRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+components:
+  schemas:
+    BlankEnum:
+      enum:
+      - ''
+    Community:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: 集会名
+          maxLength: 100
+        created_at:
+          type: string
+          format: date
+          nullable: true
+          title: 開始日
+        updated_at:
+          type: string
+          format: date
+          readOnly: true
+          title: 更新日
+        start_time:
+          type: string
+          format: time
+        duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: 開催時間
+          description: 単位は分
+        weekdays:
+          title: 曜日
+        frequency:
+          type: string
+          title: 開催周期
+          maxLength: 100
+        organizers:
+          type: string
+          title: 主催・副主催
+          maxLength: 200
+        group_url:
+          type: string
+          format: uri
+          title: VRChatグループURL
+          maxLength: 200
+        group_id:
+          type: string
+          readOnly: true
+        organizer_url:
+          type: string
+          format: uri
+          title: 主催プロフィールURL
+          maxLength: 200
+        sns_url:
+          type: string
+          format: uri
+          title: XアカウントURL
+          maxLength: 200
+        discord:
+          type: string
+          format: uri
+          title: Discordサーバー
+          maxLength: 200
+        twitter_hashtag:
+          type: string
+          title: Xハッシュタグ
+          maxLength: 100
+        poster_image:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          title: 集会紹介
+        platform:
+          allOf:
+          - $ref: '#/components/schemas/PlatformEnum'
+          title: 対応プラットフォーム
+        tags:
+          title: タグ
+        allow_poster_repost:
+          type: boolean
+          title: 集会を紹介するためのポスター転載を許可する
+      required:
+      - frequency
+      - group_id
+      - id
+      - name
+      - organizers
+      - poster_image
+      - start_time
+      - updated_at
+    DetailTypeEnum:
+      enum:
+      - LT
+      - SPECIAL
+      - BLOG
+      type: string
+      description: |-
+        * `LT` - LT（発表）
+        * `SPECIAL` - 特別企画
+        * `BLOG` - ブログ
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        community:
+          $ref: '#/components/schemas/Community'
+        date:
+          type: string
+          format: date
+          title: 開催日
+        start_time:
+          type: string
+          format: time
+        duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: 開催時間（分）
+        weekday:
+          title: 曜日
+          oneOf:
+          - $ref: '#/components/schemas/WeekdayEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+      required:
+      - community
+      - date
+      - id
+      - start_time
+    EventDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        event:
+          $ref: '#/components/schemas/Event'
+        start_time:
+          type: string
+          format: time
+          title: 開始時刻
+        duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: 発表時間（分）
+        youtube_url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        slide_url:
+          type: string
+          format: uri
+          nullable: true
+          title: スライド URL
+          maxLength: 200
+        thumbnail_image:
+          type: string
+          format: uri
+          nullable: true
+          title: サムネイル画像
+          description: 記事ページの上部に表示する画像
+        speaker:
+          type: string
+          title: 発表者
+          description: VRChat表示名が望ましい。ただし、表記揺れはそのうち勝手に調整します
+          maxLength: 200
+        theme:
+          type: string
+          title: テーマ
+          maxLength: 100
+        additional_info:
+          type: string
+          title: 追加情報
+          description: 登壇者が入力した追加情報
+      required:
+      - event
+      - id
+    EventDetailWrite:
+      type: object
+      description: EventDetail作成・更新用シリアライザー
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        event:
+          type: integer
+          title: イベント
+        detail_type:
+          allOf:
+          - $ref: '#/components/schemas/DetailTypeEnum'
+          title: タイプ
+        start_time:
+          type: string
+          format: time
+          title: 開始時刻
+        duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: 発表時間（分）
+        youtube_url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        slide_url:
+          type: string
+          format: uri
+          nullable: true
+          title: スライド URL
+          maxLength: 200
+        slide_file:
+          type: string
+          format: uri
+          nullable: true
+          title: スライド
+        thumbnail_image:
+          type: string
+          format: uri
+          nullable: true
+          title: サムネイル画像
+          description: 記事ページの上部に表示する画像
+        speaker:
+          type: string
+          title: 発表者
+          description: VRChat表示名が望ましい。ただし、表記揺れはそのうち勝手に調整します
+          maxLength: 200
+        theme:
+          type: string
+          title: テーマ
+          maxLength: 100
+        h1:
+          type: string
+          title: タイトル(H1)
+          maxLength: 255
+        contents:
+          type: string
+          title: 内容
+        meta_description:
+          type: string
+          title: メタディスクリプション
+          maxLength: 255
+        additional_info:
+          type: string
+          title: 追加情報
+          description: 登壇者が入力した追加情報
+      required:
+      - event
+      - id
+    EventDetailWriteRequest:
+      type: object
+      description: EventDetail作成・更新用シリアライザー
+      properties:
+        event:
+          type: integer
+          title: イベント
+        detail_type:
+          allOf:
+          - $ref: '#/components/schemas/DetailTypeEnum'
+          title: タイプ
+        start_time:
+          type: string
+          format: time
+          title: 開始時刻
+        duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: 発表時間（分）
+        youtube_url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        slide_url:
+          type: string
+          format: uri
+          nullable: true
+          title: スライド URL
+          maxLength: 200
+        slide_file:
+          type: string
+          format: binary
+          nullable: true
+          title: スライド
+        thumbnail_image:
+          type: string
+          format: binary
+          nullable: true
+          title: サムネイル画像
+          description: 記事ページの上部に表示する画像
+        speaker:
+          type: string
+          title: 発表者
+          description: VRChat表示名が望ましい。ただし、表記揺れはそのうち勝手に調整します
+          maxLength: 200
+        theme:
+          type: string
+          title: テーマ
+          maxLength: 100
+        h1:
+          type: string
+          title: タイトル(H1)
+          maxLength: 255
+        contents:
+          type: string
+          title: 内容
+        meta_description:
+          type: string
+          title: メタディスクリプション
+          maxLength: 255
+        additional_info:
+          type: string
+          title: 追加情報
+          description: 登壇者が入力した追加情報
+        generate_from_pdf:
+          type: boolean
+          writeOnly: true
+          default: false
+      required:
+      - event
+    FrequencyEnum:
+      enum:
+      - WEEKLY
+      - MONTHLY_BY_DATE
+      - MONTHLY_BY_WEEK
+      - OTHER
+      type: string
+      description: |-
+        * `WEEKLY` - 毎週
+        * `MONTHLY_BY_DATE` - 毎月（日付指定）
+        * `MONTHLY_BY_WEEK` - 毎月（第N曜日）
+        * `OTHER` - その他（自由記述）
+    GatheringList:
+      type: object
+      description: GatheringList の OpenAPI スキーマ定義。
+      properties:
+        ジャンル:
+          type: string
+          nullable: true
+        曜日:
+          type: string
+          nullable: true
+        イベント名:
+          type: string
+          nullable: true
+        開始時刻:
+          type: string
+          nullable: true
+        開催周期:
+          type: string
+          nullable: true
+        主催・副主催:
+          type: string
+          nullable: true
+        Join先:
+          type: string
+          nullable: true
+        グループID:
+          type: string
+          nullable: true
+        Discord:
+          type: string
+          nullable: true
+        Twitter:
+          type: string
+          nullable: true
+        ハッシュタグ:
+          type: string
+          nullable: true
+        ポスター:
+          type: string
+          format: uri
+          nullable: true
+        イベント紹介:
+          type: string
+          nullable: true
+        ポスター転載可:
+          type: boolean
+          nullable: true
+      required:
+      - Discord
+      - Join先
+      - Twitter
+      - イベント名
+      - イベント紹介
+      - グループID
+      - ジャンル
+      - ハッシュタグ
+      - ポスター
+      - ポスター転載可
+      - 主催・副主催
+      - 曜日
+      - 開催周期
+      - 開始時刻
+    PatchedEventDetailWriteRequest:
+      type: object
+      description: EventDetail作成・更新用シリアライザー
+      properties:
+        event:
+          type: integer
+          title: イベント
+        detail_type:
+          allOf:
+          - $ref: '#/components/schemas/DetailTypeEnum'
+          title: タイプ
+        start_time:
+          type: string
+          format: time
+          title: 開始時刻
+        duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: 発表時間（分）
+        youtube_url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        slide_url:
+          type: string
+          format: uri
+          nullable: true
+          title: スライド URL
+          maxLength: 200
+        slide_file:
+          type: string
+          format: binary
+          nullable: true
+          title: スライド
+        thumbnail_image:
+          type: string
+          format: binary
+          nullable: true
+          title: サムネイル画像
+          description: 記事ページの上部に表示する画像
+        speaker:
+          type: string
+          title: 発表者
+          description: VRChat表示名が望ましい。ただし、表記揺れはそのうち勝手に調整します
+          maxLength: 200
+        theme:
+          type: string
+          title: テーマ
+          maxLength: 100
+        h1:
+          type: string
+          title: タイトル(H1)
+          maxLength: 255
+        contents:
+          type: string
+          title: 内容
+        meta_description:
+          type: string
+          title: メタディスクリプション
+          maxLength: 255
+        additional_info:
+          type: string
+          title: 追加情報
+          description: 登壇者が入力した追加情報
+        generate_from_pdf:
+          type: boolean
+          writeOnly: true
+          default: false
+    PlatformEnum:
+      enum:
+      - PC
+      - All
+      - Android
+      type: string
+      description: |-
+        * `PC` - PC
+        * `All` - PC / モバイル (Meta Quest 単体)
+        * `Android` - モバイル (Meta Quest 単体)
+    RecurrenceRule:
+      type: object
+      description: RecurrenceRuleのシリアライザー
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        frequency:
+          allOf:
+          - $ref: '#/components/schemas/FrequencyEnum'
+          title: 頻度
+        interval:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: 間隔
+        week_of_month:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+          title: 第N週
+        custom_rule:
+          type: string
+          nullable: true
+          title: カスタムルール
+        start_date:
+          type: string
+          format: date
+          nullable: true
+          title: 起点日
+          description: 定期イベントの起点となる日付。隔週の場合はこの日付を基準に計算されます。
+        end_date:
+          type: string
+          format: date
+          nullable: true
+          title: 終了日
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        future_events_count:
+          type: string
+          readOnly: true
+      required:
+      - created_at
+      - frequency
+      - future_events_count
+      - id
+      - updated_at
+    RecurrenceRuleDeleteRequest:
+      type: object
+      description: RecurrenceRule削除用のシリアライザー
+      properties:
+        delete_from_date:
+          type: string
+          format: date
+          description: この日付以降のイベントを削除（指定しない場合は今日以降）
+        delete_rule:
+          type: boolean
+          default: true
+          description: 定期ルール自体も削除するか
+    WeekdayEnum:
+      enum:
+      - Sun
+      - Mon
+      - Tue
+      - Wed
+      - Thu
+      - Fri
+      - Sat
+      - Other
+      type: string
+      description: |-
+        * `Sun` - 日曜日
+        * `Mon` - 月曜日
+        * `Tue` - 火曜日
+        * `Wed` - 水曜日
+        * `Thu` - 木曜日
+        * `Fri` - 金曜日
+        * `Sat` - 土曜日
+        * `Other` - その他

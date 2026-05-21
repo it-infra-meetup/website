@@ -27,6 +27,15 @@
   lint requirements diverge (Vue/browser globals vs Node-only client),
   and root-level overrides leaked into unrelated packages.
 
+- **2026-05-21 (during Phase 2 implementation):** Dropped the `tsx`
+  dependency from `@vrc-ta-hub/client`. Node 24 (pinned via `mise.toml`)
+  strips TypeScript types natively, so `node scripts/foo.ts` runs `.ts`
+  source directly. The package's `tsconfig.json` now enables
+  `allowImportingTsExtensions: true`, and scripts import each other with
+  explicit `.ts` extensions (e.g. `from './lib.ts'`) — native node won't
+  remap `.js` → `.ts` the way `tsx` does. This removes a build-tool
+  dependency and matches the runtime exactly.
+
 ## 1. Purpose
 
 Provide a pure-TypeScript, zod-validated client for the **public read-only** subset
@@ -454,7 +463,7 @@ Scripts:
   "test":             "vitest run",
   "test:watch":       "vitest",
   "typecheck":        "tsc --noEmit",
-  "fixtures:refresh": "tsx scripts/refresh-fixtures.ts"
+  "fixtures:refresh": "node scripts/refresh-fixtures.ts"
 }
 ```
 
@@ -593,13 +602,12 @@ website deps move into `apps/website/package.json`.
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "fixtures:refresh": "tsx scripts/refresh-fixtures.ts"
+    "fixtures:refresh": "node scripts/refresh-fixtures.ts"
   },
   "dependencies": {
     "zod": "^4.4.0"
   },
   "devDependencies": {
-    "tsx": "^4.19.0",
     "typescript": "6.0.3",
     "vitest": "^2.1.0"
   }
