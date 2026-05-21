@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/it-infra-meetup/website/compare/v1.5.0...v1.6.0) (2026-05-21)
+
+
+### Features
+
+* **frontend:** integrate @vrc-ta-hub/client for upcoming event count ([#10](https://github.com/it-infra-meetup/website/issues/10)) ([b6a301b](https://github.com/it-infra-meetup/website/commit/b6a301bd883f354626fbed0fb0338a412632c288))
+
 # [1.5.0](https://github.com/it-infra-meetup/website/compare/v1.4.0...v1.5.0) (2026-05-21)
 
 
