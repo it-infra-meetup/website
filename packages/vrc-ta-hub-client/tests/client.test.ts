@@ -114,6 +114,20 @@ describe('createClient — full surface', () => {
     )
   })
 
+  it('listEventDetails forwards community id as integer query param', async () => {
+    const seen: string[] = []
+    const client = createClient({
+      fetch: stubFetch((url) => {
+        seen.push(url)
+        return jsonResponse(eventDetailFixture)
+      }),
+    })
+    await client.listEventDetails({ community: 30, start_date: '2026-02-20', end_date: '2026-05-21' })
+    expect(seen[0]).toBe(
+      'https://vrc-ta-hub.com/api/v1/event_detail/?format=json&community=30&start_date=2026-02-20&end_date=2026-05-21',
+    )
+  })
+
   it('getEventDetail hits /api/v1/event_detail/{id}/', async () => {
     const seen: string[] = []
     const client = createClient({
