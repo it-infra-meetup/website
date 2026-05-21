@@ -44,13 +44,14 @@ import { useEventsStore } from '@/stores/eventsStore'
 const eventsStore = useEventsStore()
 
 onMounted(() => {
-  void eventsStore.loadUpcoming()
+  void eventsStore.loadNext()
 })
 
 const eventsBadge = computed(() => {
   if (eventsStore.loading) return '読み込み中…'
-  if (eventsStore.error) return '今月の予定: 取得失敗'
-  if (eventsStore.count === null) return ''
-  return `今月の予定: ${eventsStore.count} 件`
+  if (eventsStore.error) return '次回開催: 取得失敗'
+  const ev = eventsStore.nextEvent
+  if (!ev) return '次回開催予定なし'
+  return `次回開催: ${ev.date} ${ev.start_time}`
 })
 </script>
