@@ -36,6 +36,8 @@ export interface ListEventsParams {
 }
 
 export interface ListEventDetailsParams {
+  /** Community id (server-side exact-match integer filter). */
+  community?: number
   theme?: string
   speaker?: string
   start_date?: string
@@ -155,6 +157,7 @@ export function createClient(options: ClientOptions = {}): Client {
       list<EventDetail>(
         '/api/v1/event_detail/',
         {
+          community: params.community,
           theme: params.theme,
           speaker: params.speaker,
           start_date: params.start_date,

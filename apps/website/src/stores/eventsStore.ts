@@ -6,16 +6,24 @@ import {
   isErr,
   type ClientError,
   type Event,
+  type EventDetail,
 } from '@vrc-ta-hub/client'
 
 const client = createClient()
 
 /** VRC TA Hub community id for ITインフラ集会. Used for server-side
- *  exact-match filtering on `/api/v1/event/?community=<id>`. */
+ *  exact-match filtering on `/api/v1/event/?community=<id>` and
+ *  `/api/v1/event_detail/?community=<id>`. */
 const IT_INFRA_COMMUNITY_ID = 30
 
 /** Window we look ahead for the next event. */
 const LOOKAHEAD_DAYS = 31
+
+/** Window we look back for recent LT history. */
+const LOOKBACK_DAYS = 90
+
+/** How many recent LTs to keep for the Recent Events section. */
+const RECENT_LT_LIMIT = 3
 
 function isoDate(d: Date): string {
   return d.toISOString().slice(0, 10)
@@ -31,15 +39,26 @@ function lookaheadIso(): string {
   return isoDate(d)
 }
 
+function lookbackIso(): string {
+  const d = new Date()
+  d.setDate(d.getDate() - LOOKBACK_DAYS)
+  return isoDate(d)
+}
+
 export const useEventsStore = defineStore('events', () => {
   // State
   const nextEvent = ref<Event | null>(null)
+  const recentLts = ref<EventDetail[]>([])
   const error = ref<ClientError | null>(null)
+  const recentLtsError = ref<ClientError | null>(null)
   const loading = ref(false)
+  const recentLtsLoading = ref(false)
 
   // Getters
   const hasError = computed(() => error.value !== null)
   const hasNextEvent = computed(() => nextEvent.value !== null)
+  const hasRecentLtsError = computed(() => recentLtsError.value !== null)
+  const hasRecentLts = computed(() => recentLts.value.length > 0)
 
   // Actions
   async function loadNext(): Promise<void> {
@@ -64,15 +83,45 @@ export const useEventsStore = defineStore('events', () => {
     error.value = result.error
   }
 
+  async function loadRecentLts(): Promise<void> {
+    recentLtsLoading.value = true
+    recentLtsError.value = null
+    const result = await client.listEventDetails({
+      community: IT_INFRA_COMMUNITY_ID,
+      start_date: lookbackIso(),
+      end_date: todayIso(),
+    })
+    recentLtsLoading.value = false
+    if (isOk(result)) {
+      const sorted = [...result.data].sort((a, b) => {
+        const dateCmp = b.event.date.localeCompare(a.event.date)
+        if (dateCmp !== 0) return dateCmp
+        return b.start_time.localeCompare(a.start_time)
+      })
+      recentLts.value = sorted.slice(0, RECENT_LT_LIMIT)
+      return
+    }
+    if (isErr(result) && result.error.kind === 'network' && result.error.aborted) {
+      return
+    }
+    recentLtsError.value = result.error
+  }
+
   return {
     // State
     nextEvent,
+    recentLts,
     error,
+    recentLtsError,
     loading,
+    recentLtsLoading,
     // Getters
     hasError,
     hasNextEvent,
+    hasRecentLtsError,
+    hasRecentLts,
     // Actions
     loadNext,
+    loadRecentLts,
   }
 })

@@ -9,12 +9,22 @@
               Recent Events
             </h2>
           </div>
-          <ul class="space-y-4 font-mono text-sm">
+
+          <div v-if="loading" class="muted-text font-mono text-sm">
+            LOADING…
+          </div>
+          <div v-else-if="error" class="muted-text font-mono text-sm">
+            開催情報を取得できませんでした
+          </div>
+          <div v-else-if="events.length === 0" class="muted-text font-mono text-sm">
+            直近の開催はありません
+          </div>
+          <ul v-else class="space-y-4 font-mono text-sm">
             <li
               v-for="(event, index) in events"
-              :key="index"
+              :key="event.id"
               class="pl-4 py-1"
-              :class="event.borderColor"
+              :class="index % 2 === 0 ? 'border-primary' : 'border-secondary'"
             >
               <div class="muted-text text-xs">
                 {{ event.date }}
@@ -37,33 +47,26 @@
 </template>
 
 <script setup lang="ts">
-interface EventItem {
-  date: string
-  title: string
-  description: string
-  borderColor: string
-}
+import { computed, onMounted } from 'vue'
+import { useEventsStore } from '@/stores/eventsStore'
 
-const events: EventItem[] = [
-  {
-    date: "2025.11.22",
-    title: "第64回ITインフラ集会.log",
-    description: "雑談会",
-    borderColor: "border-primary"
-  },
-  {
-    date: "2025.11.08",
-    title: "自立機械知能PAMIQの計算機環境",
-    description: "speaker.GesonAnko",
-    borderColor: "border-secondary"
-  },
-  {
-    date: "2025.10.11",
-    title: "NixOS + Kubernetesで構築する自宅サーバーのすべて",
-    description: "speaker.ichi-h",
-    borderColor: "border-primary"
-  }
-]
+const eventsStore = useEventsStore()
+
+const loading = computed(() => eventsStore.recentLtsLoading)
+const error = computed(() => eventsStore.recentLtsError)
+
+const events = computed(() =>
+  eventsStore.recentLts.map((detail) => ({
+    id: detail.id,
+    date: detail.event.date.replace(/-/g, '.'),
+    title: detail.theme,
+    description: detail.speaker ? `speaker.${detail.speaker}` : '',
+  })),
+)
+
+onMounted(() => {
+  void eventsStore.loadRecentLts()
+})
 </script>
 
 <style scoped>
