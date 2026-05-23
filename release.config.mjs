@@ -23,7 +23,7 @@ export default {
       {
         prepareCmd: "pnpm --filter website build",
         publishCmd:
-          "aws s3 sync apps/website/dist/ s3://it-infra-meetup/website/ --delete && aws cloudfront create-invalidation --distribution-id \"$CLOUDFRONT_DISTRIBUTION_ID\" --paths '/*'",
+          "aws s3 sync apps/website/dist/ \"s3://$S3_BUCKET_NAME/\" --delete && aws cloudfront create-invalidation --distribution-id \"$CLOUDFRONT_DISTRIBUTION_ID\" --paths '/*'",
       },
     ],
     "@semantic-release/github",
