@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/it-infra-meetup/website/compare/v1.8.0...v1.9.0) (2026-05-23)
+
+
+### Features
+
+* read S3 bucket name from var; remove obsolete aws/ policy docs ([#14](https://github.com/it-infra-meetup/website/issues/14)) ([57cfb19](https://github.com/it-infra-meetup/website/commit/57cfb190a4efe6976ad0c1c0893a8032a9897b46))
+
 # [1.8.0](https://github.com/it-infra-meetup/website/compare/v1.7.0...v1.8.0) (2026-05-21)
 
 
