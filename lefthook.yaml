@@ -1,3 +1,9 @@
+commit-msg:
+  parallel: true
+  jobs:
+    - name: commitlint
+      run: pnpm run commitlint --edit {1}
+
 pre-commit:
   parallel: true
   jobs:
@@ -9,11 +15,18 @@ pre-commit:
       run: mise lock
       stage_fixed: true
 
-commit-msg:
+pre-push:
   parallel: true
   jobs:
-    - name: commitlint
-      run: pnpm run commitlint --edit {1}
+    - name: check-branch
+      run: |
+        # Prevent direct pushes to main branch
+        branch=$(git rev-parse --abbrev-ref HEAD)
+        if [ "$branch" = "main" ]; then
+          echo "❌ Direct push to main branch is not allowed!"
+          echo "Please create a feature branch and open a pull request."
+          exit 1
+        fi
 
 post-checkout:
   parallel: true
