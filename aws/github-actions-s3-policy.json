@@ -24,6 +24,12 @@
         "s3:DeleteObject"
       ],
       "Resource": "arn:aws:s3:::it-infra-meetup/website/*"
+    },
+    {
+      "Sid": "InvalidateCloudFrontDistribution",
+      "Effect": "Allow",
+      "Action": "cloudfront:CreateInvalidation",
+      "Resource": "arn:aws:cloudfront::357151442673:distribution/EW606QTVMD4I0"
     }
   ]
 }
