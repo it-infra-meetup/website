@@ -47,4 +47,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+          S3_BUCKET_NAME: ${{ vars.S3_BUCKET_NAME }}
         run: pnpm exec semantic-release
