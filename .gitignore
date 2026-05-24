@@ -1,3 +1,6 @@
+# local mise configuration
+mise.local.*
+
 # Logs
 logs
 *.log
