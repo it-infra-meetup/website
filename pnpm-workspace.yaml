@@ -2,3 +2,6 @@ packages:
   - 'apps/*'
   - 'packages/*'
 minimumReleaseAge: 4320
+minimumReleaseAgeExclude:
+  # Renovate security update: pnpm@10.28.2
+  - pnpm@10.28.2
