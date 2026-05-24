@@ -6,6 +6,7 @@
     "helpers:pinGitHubActionDigests",
     ":enableVulnerabilityAlertsWithLabel(security)"
   ],
+  "timezone": "Asia/Tokyo",
   "schedule": ["before 9am on saturday"],
   "lockFileMaintenance": {
     "enabled": true,
