@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, type Ref, type ComputedRef } from 'vue'
 import {
   createClient,
   isOk,
@@ -45,7 +45,22 @@ function lookbackIso(): string {
   return isoDate(d)
 }
 
-export const useEventsStore = defineStore('events', () => {
+interface EventsStoreState {
+  nextEvent: Ref<Event | null>
+  recentLts: Ref<EventDetail[]>
+  error: Ref<ClientError | null>
+  recentLtsError: Ref<ClientError | null>
+  loading: Ref<boolean>
+  recentLtsLoading: Ref<boolean>
+  hasError: ComputedRef<boolean>
+  hasNextEvent: ComputedRef<boolean>
+  hasRecentLtsError: ComputedRef<boolean>
+  hasRecentLts: ComputedRef<boolean>
+  loadNext: () => Promise<void>
+  loadRecentLts: () => Promise<void>
+}
+
+export const useEventsStore = defineStore('events', (): EventsStoreState => {
   // State
   const nextEvent = ref<Event | null>(null)
   const recentLts = ref<EventDetail[]>([])
