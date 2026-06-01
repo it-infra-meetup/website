@@ -25,3 +25,31 @@ describe('HomeView sections', () => {
     }
   }
 })
+
+const LTLIST_BLOCKS = [
+  { sel: '.archive-header', name: 'header' },
+  { sel: '.archive-grid', name: 'grid' },
+  { sel: '.pagination', name: 'pagination' },
+] as const
+
+describe('LtListView blocks', () => {
+  for (const vp of VIEWPORTS) {
+    for (const block of LTLIST_BLOCKS) {
+      test(`${block.name} @ ${vp.name}`, { timeout: 30000 }, async () => {
+        await page.viewport(vp.w, vp.h)
+        await mountApp('/lt-list')
+        if (block.sel === '.archive-grid') {
+          const imgs = Array.from(document.querySelectorAll('.archive-grid img'))
+          const imgWait = Promise.all(
+            imgs.map((img) => {
+              const i = img as HTMLImageElement
+              return i.complete ? Promise.resolve() : new Promise((r) => { i.onload = i.onerror = () => r(null) })
+            }),
+          )
+          await Promise.race([imgWait, new Promise((r) => setTimeout(r, 5000))])
+        }
+        await expect(locate(block.sel)).toMatchScreenshot(`ltlist-${block.name}-${vp.name}`)
+      })
+    }
+  }
+})
