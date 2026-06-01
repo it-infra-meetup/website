@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/it-infra-meetup/website/compare/v1.10.0...v1.11.0) (2026-06-01)
+
+
+### Features
+
+* **frontend:** SEO metadata, social cards, and AVIF image optimization ([#40](https://github.com/it-infra-meetup/website/issues/40)) ([a46e6b8](https://github.com/it-infra-meetup/website/commit/a46e6b8fc655c75dcff1597b974f25549abe50f8))
+
 # [1.10.0](https://github.com/it-infra-meetup/website/compare/v1.9.1...v1.10.0) (2026-06-01)
 
 
