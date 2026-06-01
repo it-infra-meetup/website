@@ -1,0 +1,19 @@
+/* Applied only when <body class="vrt"> — see tests/vrt/setup.ts.
+   Keeps the console panel chrome but hides the dynamic terminal/log children,
+   and stops any residual CSS motion. */
+
+/* InteractiveTerminal root (.console-top) and SystemLogStream root (.console-bottom):
+   keep the surrounding .console-side panel (bg + divider), hide the dynamic content. */
+body.vrt .console-top,
+body.vrt .console-bottom {
+  visibility: hidden;
+}
+
+/* Belt-and-suspenders: neutralise any CSS animation/transition that survives. */
+body.vrt *,
+body.vrt *::before,
+body.vrt *::after {
+  animation: none !important;
+  transition: none !important;
+  caret-color: transparent !important;
+}
