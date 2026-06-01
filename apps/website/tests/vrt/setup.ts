@@ -1,4 +1,11 @@
 import { beforeEach, vi } from 'vitest'
+// Load the app's global styles the same way main.ts does, so themed components
+// render with their real Tailwind utilities + CSS theme variables (e.g.
+// --primary-color). Without these, themed elements render unstyled (e.g. the
+// active pagination button would be white-on-transparent and invisible).
+// vrt.css is imported LAST so its neutralization overrides win.
+import '@/assets/tailwind.css'
+import '@/assets/main.css'
 import './vrt.css'
 
 // Deterministic IP so HeroSection's CONNECTION_ID hash is stable and no

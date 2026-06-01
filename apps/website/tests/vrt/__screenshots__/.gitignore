@@ -1,0 +1,8 @@
+# Commit ONLY platform-tagged baselines (e.g. *-chromium-linux.png).
+# Vitest writes failure artifacts (actual/diff images, *-N.png) next to the
+# baselines on a mismatch; never commit those. Allowlist approach: ignore
+# everything, then re-include directories + the .gitignore + baselines.
+*
+!*/
+!.gitignore
+!*-chromium-linux.png
