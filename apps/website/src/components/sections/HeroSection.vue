@@ -39,7 +39,17 @@
               }}</span>
               <div>
                 <p class="text-sm font-bold main-text mb-1">
-                  {{ step.title }}
+                  <template v-for="(seg, segIndex) in step.title" :key="segIndex">
+                    <a
+                      v-if="seg.href"
+                      :href="seg.href"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-link"
+                    >{{ seg.text }}</a><template v-else>
+                      {{ seg.text }}
+                    </template>
+                  </template>
                 </p>
                 <p class="text-xs muted-text">
                   {{ step.description }}
@@ -54,7 +64,7 @@
             </p>
             <div class="sns-links flex gap-4">
               <a
-                href="https://vrchat.com/home/group/grp_caa820c4-7aa6-48bc-a7bc-593376245419" target="_blank"
+                :href="VRCHAT_GROUP_URL" target="_blank"
                 rel="noopener noreferrer"
                 class="flex-1 flex items-center justify-center gap-2 py-2 px-4 bg-white/50 border border-[var(--primary-color)]/20 rounded hover:bg-[var(--primary-color)]/10 hover:border-[var(--primary-color)] transition-all muted-text hover:text-[var(--primary-color)]"
               >
@@ -80,7 +90,7 @@
                 </svg>
               </a>
               <a
-                href="https://discord.gg/7EtJz53ugA" target="_blank" rel="noopener noreferrer"
+                :href="DISCORD_URL" target="_blank" rel="noopener noreferrer"
                 class="p-2 bg-white/50 border border-gray-200 rounded hover:border-[#5865F2] hover:text-[#5865F2] hover:bg-white transition-all text-gray-400"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -112,29 +122,49 @@
 import {ref, onMounted} from 'vue'
 import {fetchPublicIp} from '@/clients/ipify'
 import NextEventCard from '@/components/sections/NextEventCard.vue'
+import {
+  DISCORD_URL,
+  VRCHAT_REGISTER_URL,
+  VRCHAT_DOWNLOAD_URL,
+  VRCHAT_GROUP_URL,
+  VRCHAT_GROUP_INSTANCES_URL,
+} from '@/consts/links'
 
 const baseUrl = import.meta.env.BASE_URL
 
+type TextSegment = {
+  text: string
+  href?: string
+}
+
 type JoinStep = {
-  title: string
+  title: TextSegment[]
   description?: string
 }
 
 const joinSteps: JoinStep[] = [
   {
-    title: "VRChatをダウンロード",
+    title: [{text: 'Discord', href: DISCORD_URL}, {text: 'サーバーに参加'}],
+    description: 'Discordサーバーで他のコミュニティメンバーと交流できます。参加方法などの質問も受け付けています。',
   },
   {
-    title: "Discordサーバーに参加",
-    description: "ITインフラ集会のDiscordサーバーで開催時期について詳細を知ることができます"
+    title: [{text: 'VRChat', href: VRCHAT_REGISTER_URL}, {text: 'に登録'}],
   },
   {
-    title: 'VRChatグループに参加',
-    description: '事前に以下のリンクからグループに参加してください。'
+    title: [{text: 'VRChat', href: VRCHAT_DOWNLOAD_URL}, {text: 'をダウンロード'}],
+    description: '対応: Windows / Linux / Android / iOS',
   },
   {
-    title: '隔週開催のGroup+インスタンスにJoin！',
-  }
+    title: [{text: 'VRChatグループ', href: VRCHAT_GROUP_URL}, {text: 'に参加'}],
+    description: '事前にグループに入っておくと、簡単に参加できます。',
+  },
+  {
+    title: [
+      {text: '開催時刻になったら'},
+      {text: 'Group+インスタンス', href: VRCHAT_GROUP_INSTANCES_URL},
+      {text: 'にJoin！'},
+    ],
+  },
 ]
 
 const connectionId = ref('0x-----')
