@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/it-infra-meetup/website/compare/v1.9.1...v1.10.0) (2026-06-01)
+
+
+### Features
+
+* faster boot screen + inline links in HOW TO JOIN steps ([#39](https://github.com/it-infra-meetup/website/issues/39)) ([6211465](https://github.com/it-infra-meetup/website/commit/6211465b4ab589c3122fe18dd9c632008ca1ec8f))
+
 ## [1.9.1](https://github.com/it-infra-meetup/website/compare/v1.9.0...v1.9.1) (2026-06-01)
 
 
