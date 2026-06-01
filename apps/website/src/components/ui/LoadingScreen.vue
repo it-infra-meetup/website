@@ -25,11 +25,11 @@ const percentText = ref<HTMLDivElement>()
 
 onMounted(() => {
   const tl = gsap.timeline({
-    delay: 0.3,
+    delay: 0.075,
     onComplete: () => {
       setTimeout(() => {
         uiStore.setLoading(false)
-      }, 300)
+      }, 75)
     }
   })
 
@@ -37,12 +37,12 @@ onMounted(() => {
     // プログレスバーとパーセンテージを同時にアニメーション
     tl.to(loaderBar.value, {
       width: "100%",
-      duration: 2,
+      duration: 0.5,
       ease: "power2.inOut"
     })
     .to(percentText.value, {
       innerText: "100%",
-      duration: 2,
+      duration: 0.5,
       snap: { innerText: 1 },
       ease: "power2.inOut",
       onUpdate: function() {
@@ -54,9 +54,9 @@ onMounted(() => {
     }, "<")
     .to(".loader", {
       y: "-100%",
-      duration: 0.8,
+      duration: 0.2,
       ease: "power2.inOut"
-    }, "+=0.3")
+    }, "+=0.075")
   }
 })
 </script>
