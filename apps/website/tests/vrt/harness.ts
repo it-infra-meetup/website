@@ -11,8 +11,10 @@ import { nextEventFixture, recentLtsFixture } from './fixtures'
 /** Pinia initial state shared by app and component mounts. Seeds the data the
  *  components display and flips ui.isLoading off so the LoadingScreen is skipped.
  *  With stubActions:true, eventsStore.loadNext/loadRecentLts become no-op spies,
- *  so the onMounted loaders never hit the network. */
-function makePinia() {
+ *  so the onMounted loaders never hit the network.
+ *  Pass eventsOverride to merge extra keys into the events slice (e.g. { nextEvent: null }
+ *  for the empty-state snapshot). */
+function makePinia(eventsOverride: Record<string, unknown> = {}) {
   return createTestingPinia({
     stubActions: true,
     createSpy: vi.fn,
@@ -25,6 +27,7 @@ function makePinia() {
         recentLtsError: null,
         loading: false,
         recentLtsLoading: false,
+        ...eventsOverride,
       },
     },
   })
@@ -52,16 +55,19 @@ export async function mountApp(path: string) {
   return screen
 }
 
-/** Mount a single component in isolation (pinia + router available). */
+/** Mount a single component in isolation (pinia + router available).
+ *  Pass eventsOverride to merge extra keys into the events Pinia slice, e.g.
+ *  { nextEvent: null } to test the empty-state branch of NextEventCard. */
 export async function renderComponent(
   component: Parameters<typeof render>[0],
   options: Parameters<typeof render>[1] = {},
+  eventsOverride: Record<string, unknown> = {},
 ) {
   const { global: globalOptions, ...restOptions } = options
   const { plugins: extraPlugins = [], provide: extraProvide = {}, ...restGlobal } = globalOptions ?? {}
   const screen = render(component, {
     global: {
-      plugins: [makePinia(), router, ...(Array.isArray(extraPlugins) ? extraPlugins : [extraPlugins])],
+      plugins: [makePinia(eventsOverride), router, ...(Array.isArray(extraPlugins) ? extraPlugins : [extraPlugins])],
       // Provide the Lucide context so @lucide/vue icons can call inject()
       // inside functional components without hitting the "outside setup()" warning.
       provide: { [LUCIDE_CONTEXT as unknown as string]: {}, ...extraProvide },
