@@ -23,18 +23,25 @@
             <li
               v-for="(event, index) in events"
               :key="event.id"
-              class="pl-4 py-1"
               :class="index % 2 === 0 ? 'border-primary' : 'border-secondary'"
             >
-              <div class="muted-text text-xs">
-                {{ event.date }}
-              </div>
-              <div class="main-text font-bold">
-                {{ event.title }}
-              </div>
-              <div class="muted-text text-xs mt-1">
-                {{ event.description }}
-              </div>
+              <a
+                :href="event.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="event-link block pl-4 py-1"
+              >
+                <div class="muted-text text-xs">
+                  {{ event.date }}
+                </div>
+                <div class="event-title main-text font-bold flex items-center gap-1.5">
+                  <span>{{ event.title }}</span>
+                  <ExternalLink class="external-icon w-3 h-3 shrink-0" />
+                </div>
+                <div class="muted-text text-xs mt-1">
+                  {{ event.description }}
+                </div>
+              </a>
             </li>
           </ul>
         </div>
@@ -48,7 +55,11 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
+import { ExternalLink } from '@lucide/vue'
 import { useEventsStore } from '@/stores/eventsStore'
+
+/** Canonical event-detail page on the VRC TA Hub. */
+const VRC_TA_HUB_EVENT_DETAIL_BASE = 'https://vrc-ta-hub.com/event/detail'
 
 const eventsStore = useEventsStore()
 
@@ -58,6 +69,7 @@ const error = computed(() => eventsStore.recentLtsError)
 const events = computed(() =>
   eventsStore.recentLts.map((detail) => ({
     id: detail.id,
+    url: `${VRC_TA_HUB_EVENT_DETAIL_BASE}/${detail.id}/`,
     date: detail.event.date.replace(/-/g, '.'),
     title: detail.theme,
     description: detail.speaker ? `speaker.${detail.speaker}` : '',
@@ -88,5 +100,38 @@ onMounted(() => {
 
 .border-secondary {
   border-left: 2px solid var(--secondary-color);
+}
+
+.event-link {
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.event-link:hover {
+  background-color: color-mix(in srgb, var(--primary-color) 8%, transparent);
+}
+
+.event-title {
+  transition: color 0.2s ease;
+}
+
+.event-link:hover .event-title {
+  color: var(--primary-color);
+}
+
+.external-icon {
+  color: var(--primary-color);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.event-link:hover .external-icon,
+.event-link:focus-visible .external-icon {
+  opacity: 0.8;
+}
+
+.event-link:focus-visible {
+  outline: 1px solid var(--primary-color);
+  outline-offset: 2px;
 }
 </style>
