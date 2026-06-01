@@ -1,11 +1,17 @@
 <template>
   <div class="lt-card">
     <div class="lt-thumbnail">
-      <img
-        v-if="image"
-        :src="image"
-        :alt="title"
-      >
+      <picture v-if="image">
+        <source :srcset="avifSrc" type="image/avif">
+        <img
+          :src="image"
+          :alt="title"
+          width="800"
+          height="450"
+          loading="lazy"
+          decoding="async"
+        >
+      </picture>
       <div v-else class="no-image">
         <Calendar class="w-8 h-8 opacity-30" />
       </div>
@@ -26,14 +32,17 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Calendar } from '@lucide/vue'
 
-defineProps<{
+const props = defineProps<{
   date: string
   title: string
   author: string
   image?: string
 }>()
+
+const avifSrc = computed(() => props.image?.replace(/\.(jpe?g|png)$/i, '.avif'))
 </script>
 
 <style scoped>
