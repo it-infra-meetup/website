@@ -10,7 +10,7 @@
 
 > **Note on testing:** `apps/website` has **no unit-test runner** (per CLAUDE.md, "the site has no tests"). Verification here is via the build (`pnpm build:website` / `vue-tsc -b`), `pnpm lint`, asset inspection (`identify`, `ls`, `grep` over `dist/`), and a couple of manual checks (Rich Results validator, DevTools Network). Do not add a test framework — that is out of scope.
 
-> **Commit conventions:** Conventional Commits are enforced (commitlint via lefthook `commit-msg`). All work happens on a branch — direct pushes to `main` are blocked by a `pre-push` hook. A lefthook `pre-commit` hook runs lint/actionlint; if it blocks a commit, fix the reported issue and retry.
+> **Commit conventions:** Conventional Commits are enforced (commitlint via lefthook `commit-msg`). The repo's `scope-enum` only allows `frontend`, `ci`, `infra`, `tool`, `vrc-ta-hub-client` — use **`frontend`** for all `apps/website` changes (NOT `website`). All work happens on a branch — direct pushes to `main` are blocked by a `pre-push` hook. A lefthook `pre-commit` hook runs lint/actionlint; if it blocks a commit, fix the reported issue and retry.
 
 ---
 
@@ -33,7 +33,7 @@ Expected: `Switched to a new branch 'feat/seo-and-image-optimization'`
 Run:
 ```bash
 git add docs/superpowers/specs/2026-06-01-seo-static-essentials-design.md docs/superpowers/plans/2026-06-01-seo-and-image-optimization.md
-git commit -m "docs(website): add SEO + image optimization design spec and plan"
+git commit -m "docs(frontend): add SEO + image optimization design spec and plan"
 ```
 Expected: a commit is created on `feat/seo-and-image-optimization`.
 
@@ -128,7 +128,7 @@ Run:
 ```bash
 cd /home/a1678991/IdeaProjects/website
 git add apps/website/branding apps/website/scripts/optimize-images.sh apps/website/public
-git commit -m "chore(website): move image masters to branding/, add optimize-images script, drop orphaned assets"
+git commit -m "chore(frontend): move image masters to branding/, add optimize-images script, drop orphaned assets"
 ```
 Expected: commit records the renames, deletions, and new script.
 
@@ -192,7 +192,7 @@ Run:
 ```bash
 cd /home/a1678991/IdeaProjects/website
 git add apps/website/public/favicon.ico apps/website/public/apple-touch-icon.png apps/website/public/favicon-32x32.png apps/website/public/favicon-16x16.png apps/website/public/icon-192.png apps/website/public/icon-512.png apps/website/public/site.webmanifest
-git commit -m "feat(website): generate favicon set and web manifest"
+git commit -m "feat(frontend): generate favicon set and web manifest"
 ```
 
 ---
@@ -239,7 +239,7 @@ Run:
 ```bash
 cd /home/a1678991/IdeaProjects/website
 git add apps/website/public
-git commit -m "feat(website): generate AVIF + resized fallbacks for in-page and OG images"
+git commit -m "feat(frontend): generate AVIF + resized fallbacks for in-page and OG images"
 ```
 
 ---
@@ -277,7 +277,7 @@ Run:
 ```bash
 cd /home/a1678991/IdeaProjects/website
 git add apps/website/public/robots.txt apps/website/public/sitemap.xml
-git commit -m "feat(website): add robots.txt and sitemap.xml"
+git commit -m "feat(frontend): add robots.txt and sitemap.xml"
 ```
 
 ---
@@ -390,7 +390,7 @@ Expected: `JSON-LD OK: 2 blocks` (throws if any block is invalid JSON).
 Run:
 ```bash
 git add apps/website/index.html
-git commit -m "feat(website): add SEO meta, Open Graph/Twitter cards, favicon links, and JSON-LD"
+git commit -m "feat(frontend): add SEO meta, Open Graph/Twitter cards, favicon links, and JSON-LD"
 ```
 
 ---
@@ -428,7 +428,7 @@ Expected: all succeed with no errors.
 Run:
 ```bash
 git add apps/website/src/components/sections/HeroSection.vue
-git commit -m "perf(website): serve Hero logo as AVIF with fallback"
+git commit -m "perf(frontend): serve Hero logo as AVIF with fallback"
 ```
 
 ---
@@ -477,7 +477,7 @@ Expected: all succeed.
 Run:
 ```bash
 git add apps/website/src/components/sections/AtmosphereSection.vue
-git commit -m "perf(website): serve Atmosphere images as AVIF with fallback"
+git commit -m "perf(frontend): serve Atmosphere images as AVIF with fallback"
 ```
 
 ---
@@ -547,7 +547,7 @@ Expected: all succeed. (Note: `avifSrc` is `string | undefined`; binding it to `
 Run:
 ```bash
 git add apps/website/src/components/lt/LtCard.vue
-git commit -m "perf(website): serve LT gallery thumbnails as AVIF with fallback"
+git commit -m "perf(frontend): serve LT gallery thumbnails as AVIF with fallback"
 ```
 
 ---
