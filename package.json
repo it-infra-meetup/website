@@ -12,6 +12,7 @@
     "test": "pnpm -r --filter \"./packages/*\" test",
     "typecheck": "pnpm -r --filter \"./packages/*\" --filter \"./apps/*\" typecheck",
     "fixtures:refresh": "pnpm --filter @vrc-ta-hub/client fixtures:refresh",
+    "vrt:update": "bash scripts/vrt-update.sh",
     "commitlint": "commitlint",
     "semantic-release": "semantic-release"
   },

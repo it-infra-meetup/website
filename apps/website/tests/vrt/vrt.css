@@ -1,0 +1,26 @@
+/* Applied only when <body class="vrt"> — see tests/vrt/setup.ts.
+   Keeps the console panel chrome but hides the dynamic terminal/log children,
+   and stops any residual CSS motion. */
+
+/* InteractiveTerminal root (.console-top) and SystemLogStream root (.console-bottom):
+   keep the surrounding .console-side panel (bg + divider), hide the dynamic content. */
+body.vrt .console-top,
+body.vrt .console-bottom {
+  visibility: hidden;
+}
+
+/* Hide the DataStreamBackground fixed overlay on LtListView: its updatePaths() uses
+   Math.random() for per-packet opacity, making the background non-deterministic across
+   runs even after GSAP is frozen. Hide only the data-stream root element. */
+body.vrt .data-stream-bg {
+  visibility: hidden;
+}
+
+/* Belt-and-suspenders: neutralise any CSS animation/transition that survives. */
+body.vrt *,
+body.vrt *::before,
+body.vrt *::after {
+  animation: none !important;
+  transition: none !important;
+  caret-color: transparent !important;
+}

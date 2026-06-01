@@ -15,8 +15,14 @@ dist
 dist-ssr
 *.local
 
+# pnpm store created by the VRT Docker baseline run (scripts/vrt-update.sh)
+.pnpm-store/
+
 # Playwright MCP snapshot/screenshot artifacts
 .playwright-mcp/
+
+# Vitest browser-mode run attachments (screenshot reporter output)
+.vitest-attachments/
 
 # Editor directories and files
 .vscode/*

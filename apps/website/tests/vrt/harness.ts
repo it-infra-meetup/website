@@ -1,0 +1,80 @@
+import { vi } from 'vitest'
+import { render } from 'vitest-browser-vue'
+import { createTestingPinia } from '@pinia/testing'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/all'
+import { LUCIDE_CONTEXT } from '@lucide/vue'
+import router from '@/router'
+import App from '@/App.vue'
+import { nextEventFixture, recentLtsFixture } from './fixtures'
+
+/** Pinia initial state shared by app and component mounts. Seeds the data the
+ *  components display and flips ui.isLoading off so the LoadingScreen is skipped.
+ *  With stubActions:true, eventsStore.loadNext/loadRecentLts become no-op spies,
+ *  so the onMounted loaders never hit the network.
+ *  Pass eventsOverride to merge extra keys into the events slice (e.g. { nextEvent: null }
+ *  for the empty-state snapshot). */
+function makePinia(eventsOverride: Record<string, unknown> = {}) {
+  return createTestingPinia({
+    stubActions: true,
+    createSpy: vi.fn,
+    initialState: {
+      ui: { isLoading: false, isModalOpen: false, latency: 12 },
+      events: {
+        nextEvent: nextEventFixture,
+        recentLts: recentLtsFixture,
+        error: null,
+        recentLtsError: null,
+        loading: false,
+        recentLtsLoading: false,
+        ...eventsOverride,
+      },
+    },
+  })
+}
+
+/** Freeze JS-driven motion and wait for the page to settle, then it is safe to
+ *  screenshot. CSS animations are already disabled by the Playwright provider
+ *  and by vrt.css. */
+export async function freezeAndSettle(): Promise<void> {
+  gsap.globalTimeline.pause()
+  ScrollTrigger.getAll().forEach((t) => t.kill())
+  await document.fonts.ready
+  // Let async onMounted work (ipify mock → connectionId) and layout settle.
+  await new Promise<void>((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  })
+}
+
+/** Mount the full app at the given route. */
+export async function mountApp(path: string) {
+  await router.push(path)
+  await router.isReady()
+  const screen = render(App, { global: { plugins: [makePinia(), router] } })
+  await freezeAndSettle()
+  return screen
+}
+
+/** Mount a single component in isolation (pinia + router available).
+ *  Pass eventsOverride to merge extra keys into the events Pinia slice, e.g.
+ *  { nextEvent: null } to test the empty-state branch of NextEventCard. */
+export async function renderComponent(
+  component: Parameters<typeof render>[0],
+  options: Parameters<typeof render>[1] = {},
+  eventsOverride: Record<string, unknown> = {},
+) {
+  const { global: globalOptions, ...restOptions } = options
+  const { plugins: extraPlugins = [], provide: extraProvide = {}, ...restGlobal } = globalOptions ?? {}
+  const screen = render(component, {
+    global: {
+      plugins: [makePinia(eventsOverride), router, ...(Array.isArray(extraPlugins) ? extraPlugins : [extraPlugins])],
+      // Provide the Lucide context so @lucide/vue icons can call inject()
+      // inside functional components without hitting the "outside setup()" warning.
+      provide: { [LUCIDE_CONTEXT as unknown as string]: {}, ...extraProvide },
+      ...restGlobal,
+    },
+    ...restOptions,
+  })
+  await freezeAndSettle()
+  return screen
+}

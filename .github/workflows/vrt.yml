@@ -1,0 +1,41 @@
+name: VRT
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  vrt:
+    name: Visual Regression
+    runs-on: ubuntu-latest
+    # Digest-pinned Playwright image: provides Chromium + system fonts (incl.
+    # Japanese IPAGothic) so renders match `pnpm vrt:update`. Keep this digest
+    # in sync with scripts/vrt-update.sh.
+    container:
+      image: mcr.microsoft.com/playwright:v1.60.0-noble@sha256:9bd26ad900bb5e0f4dee75839e957a89ae89c2b7ab1e76050e559790e946b948
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm
+        run: npm install -g pnpm@11
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Chromium is already present in the image (PLAYWRIGHT_BROWSERS_PATH),
+      # so no `playwright install` is needed.
+      - name: Run visual regression tests
+        run: pnpm --filter website test:vrt
+
+      - name: Upload diff artifacts on failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: vrt-diffs
+          path: apps/website/.vitest-attachments/
+          if-no-files-found: ignore
