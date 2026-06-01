@@ -175,3 +175,16 @@ section {
     text-align: left;
   }
 }
+
+/* インラインリンク（本文中のリンク用） */
+.inline-link {
+  color: var(--primary-color);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+.inline-link:hover {
+  text-shadow: 0 0 6px rgba(0, 123, 255, 0.5);
+}
