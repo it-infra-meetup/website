@@ -6,7 +6,10 @@
           <div class="font-mono text-xs primary-text mb-2">
             TARGET: VRChat_Group
           </div>
-          <img :src="`${baseUrl}ITlnfra.png`">
+          <picture>
+            <source :srcset="`${baseUrl}ITlnfra.avif`" type="image/avif">
+            <img :src="`${baseUrl}ITlnfra.png`" alt="ITインフラ集会" width="2048" height="630" decoding="async">
+          </picture>
         </div>
         <NextEventCard />
       </div>
