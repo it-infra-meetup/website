@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/it-infra-meetup/website/compare/v1.12.0...v1.13.0) (2026-06-01)
+
+
+### Features
+
+* **frontend:** visual regression testing (VRT) ([#42](https://github.com/it-infra-meetup/website/issues/42)) ([87b7a6e](https://github.com/it-infra-meetup/website/commit/87b7a6eaf5f01ac8704eaddac8fa791293e4849e))
+
 # [1.12.0](https://github.com/it-infra-meetup/website/compare/v1.11.0...v1.12.0) (2026-06-01)
 
 
