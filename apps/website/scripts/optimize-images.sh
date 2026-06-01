@@ -6,9 +6,9 @@ cd "$(dirname "$0")/.."   # -> apps/website
 
 mkdir -p public/lts
 
-# --- Hero logo: 4045x1245 -> 960w, keep alpha ---
-magick branding/ITlnfra.png -resize 960x -strip -define png:compression-level=9 public/ITlnfra.png
-magick branding/ITlnfra.png -resize 960x -quality 55 public/ITlnfra.avif
+# --- Hero logo: 4045x1245 -> 2048w (long side, crisp on HiDPI), keep alpha ---
+magick branding/ITlnfra.png -resize 2048x -strip -define png:compression-level=9 public/ITlnfra.png
+magick branding/ITlnfra.png -resize 2048x -quality 55 public/ITlnfra.avif
 
 # --- Atmosphere photos: native 560x320, keep alpha ---
 for n in it-infra-lt it-infra-writing it-infra-lt-photo; do

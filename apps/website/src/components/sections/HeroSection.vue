@@ -8,7 +8,7 @@
           </div>
           <picture>
             <source :srcset="`${baseUrl}ITlnfra.avif`" type="image/avif">
-            <img :src="`${baseUrl}ITlnfra.png`" alt="ITインフラ集会" width="960" height="295" decoding="async">
+            <img :src="`${baseUrl}ITlnfra.png`" alt="ITインフラ集会" width="2048" height="630" decoding="async">
           </picture>
         </div>
         <NextEventCard />
