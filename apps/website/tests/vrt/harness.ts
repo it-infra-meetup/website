@@ -3,6 +3,7 @@ import { render } from 'vitest-browser-vue'
 import { createTestingPinia } from '@pinia/testing'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/all'
+import { LUCIDE_CONTEXT } from '@lucide/vue'
 import router from '@/router'
 import App from '@/App.vue'
 import { nextEventFixture, recentLtsFixture } from './fixtures'
@@ -56,9 +57,17 @@ export async function renderComponent(
   component: Parameters<typeof render>[0],
   options: Parameters<typeof render>[1] = {},
 ) {
+  const { global: globalOptions, ...restOptions } = options
+  const { plugins: extraPlugins = [], provide: extraProvide = {}, ...restGlobal } = globalOptions ?? {}
   const screen = render(component, {
-    global: { plugins: [makePinia(), router] },
-    ...options,
+    global: {
+      plugins: [makePinia(), router, ...(Array.isArray(extraPlugins) ? extraPlugins : [extraPlugins])],
+      // Provide the Lucide context so @lucide/vue icons can call inject()
+      // inside functional components without hitting the "outside setup()" warning.
+      provide: { [LUCIDE_CONTEXT as unknown as string]: {}, ...extraProvide },
+      ...restGlobal,
+    },
+    ...restOptions,
   })
   await freezeAndSettle()
   return screen
