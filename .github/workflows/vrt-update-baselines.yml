@@ -1,0 +1,55 @@
+name: VRT Update Baselines
+
+# Manually regenerate the committed VRT baselines in the same digest-pinned
+# Playwright image the VRT check uses, and commit them back to the target
+# branch. Use this when an intentional UI change requires new baselines and you
+# cannot run `pnpm vrt:update` locally.
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch to regenerate baselines on and commit back to
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  update:
+    name: Regenerate baselines
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    container:
+      image: mcr.microsoft.com/playwright:v1.60.0-noble@sha256:9bd26ad900bb5e0f4dee75839e957a89ae89c2b7ab1e76050e559790e946b948
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ inputs.branch }}
+          persist-credentials: false
+
+      - name: Install pnpm
+        run: npm install -g pnpm@11
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Regenerate baselines
+        run: pnpm --filter website test:vrt:update
+
+      - name: Commit and push updated baselines
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ inputs.branch }}
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/website/tests/vrt/__screenshots__
+          if git diff --cached --quiet; then
+            echo "No baseline changes."
+            exit 0
+          fi
+          git commit -m "test(frontend): update VRT baselines [skip ci]"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${BRANCH}"
