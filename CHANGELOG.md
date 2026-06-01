@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/it-infra-meetup/website/compare/v1.11.0...v1.12.0) (2026-06-01)
+
+
+### Features
+
+* **frontend:** link recent event items to VRC TA Hub detail pages ([#41](https://github.com/it-infra-meetup/website/issues/41)) ([169b206](https://github.com/it-infra-meetup/website/commit/169b206e17eacb670478b839ac9202afcbe9319b))
+
 # [1.11.0](https://github.com/it-infra-meetup/website/compare/v1.10.0...v1.11.0) (2026-06-01)
 
 
