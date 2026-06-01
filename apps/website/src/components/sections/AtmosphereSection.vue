@@ -17,7 +17,18 @@
             :key="index"
             class="atmosphere-card glass-panel hover:bg-white/80 transition-colors text-left"
           >
-            <img class="mb-4" alt="" :src="item.img">
+            <picture>
+              <source :srcset="toAvif(item.img)" type="image/avif">
+              <img
+                class="mb-4"
+                :src="item.img"
+                :alt="item.title"
+                width="560"
+                height="320"
+                loading="lazy"
+                decoding="async"
+              >
+            </picture>
             <div class="flex gap-2">
               <component
                 :is="item.icon"
@@ -67,6 +78,7 @@ const currentIndex = ref(0)
 const containerRef = ref<HTMLElement | null>(null)
 
 const baseUrl = import.meta.env.BASE_URL
+const toAvif = (src: string): string => src.replace(/\.(png|jpe?g)$/i, '.avif')
 
 type AtmosphereItem = {
   icon: Component
