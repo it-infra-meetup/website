@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/it-infra-meetup/website/compare/v1.9.0...v1.9.1) (2026-06-01)
+
+
+### Bug Fixes
+
+* **deps:** update frontend ([#38](https://github.com/it-infra-meetup/website/issues/38)) ([dff48d0](https://github.com/it-infra-meetup/website/commit/dff48d0d98fd35c65508f2e83c1630d3e3f54255))
+
 # [1.9.0](https://github.com/it-infra-meetup/website/compare/v1.8.0...v1.9.0) (2026-05-23)
 
 
