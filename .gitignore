@@ -18,6 +18,9 @@ dist-ssr
 # Playwright MCP snapshot/screenshot artifacts
 .playwright-mcp/
 
+# Vitest browser-mode run attachments (screenshot reporter output)
+.vitest-attachments/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
