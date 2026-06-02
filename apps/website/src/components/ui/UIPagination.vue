@@ -114,9 +114,9 @@ const emit = defineEmits<{
 }
 
 .pagination-page.active {
-  background: var(--primary-color);
+  background: #e91e63;
   color: white;
-  border-color: var(--primary-color);
+  border-color: #e91e63;
 }
 
 @media (max-width: 900px) {
