@@ -108,3 +108,9 @@ import MyComponent from "@/components/MyComponent.vue";
 
 `main` へのマージで semantic-release が走り、サイトをビルドして S3
 へ同期・CloudFront のキャッシュを無効化します。
+
+## ライセンス
+
+- **ソースコード:** [MIT License](./LICENSE)。
+- **アセット（ロゴ・画像・LT スライド画像など、`apps/website/public/` 配下のファイル）:**
+  各オリジナル作者に著作権が帰属します（All Rights Reserved）。許可なく複製・再配布・再利用はできません。
