@@ -59,12 +59,73 @@ function buildComment(failures) {
   return body
 }
 
-// --- side effects (implemented in Task 2) ---
-function publishToBranch(_failures) {
-  throw new Error('publishToBranch not implemented yet')
+// --- side effects ---
+function git(cwd, ...args) {
+  return execFileSync('git', args, { cwd, stdio: ['ignore', 'pipe', 'pipe'], encoding: 'utf8' })
 }
-async function upsertComment(_body) {
-  throw new Error('upsertComment not implemented yet')
+
+function publishToBranch(failures) {
+  const url = `https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git`
+  const tmp = mkdtempSync(join(tmpdir(), 'vrt-report-'))
+  let existed = true
+  try {
+    execFileSync('git', ['clone', '--quiet', '--depth', '1', '--single-branch',
+      '--branch', HOST_BRANCH, url, tmp], { stdio: ['ignore', 'pipe', 'pipe'] })
+  } catch {
+    existed = false
+    git(tmp, 'init', '--quiet', '--initial-branch', HOST_BRANCH)
+  }
+  git(tmp, 'config', 'user.name', 'github-actions[bot]')
+  git(tmp, 'config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com')
+
+  const prDir = join(tmp, `pr-${PR_NUMBER}`)
+  rmSync(prDir, { recursive: true, force: true })
+  mkdirSync(prDir, { recursive: true })
+  for (const f of failures) {
+    copyFileSync(f.original, join(prDir, `${f.name}.orig.png`))
+    copyFileSync(f.actual, join(prDir, `${f.name}.actual.png`))
+    if (f.diff) copyFileSync(f.diff, join(prDir, `${f.name}.diff.png`))
+  }
+  if (!existed) {
+    writeFileSync(join(tmp, 'README.md'),
+      'Auto-managed VRT failure images (see scripts/vrt-report.mjs). Do not edit by hand.\n')
+  }
+  git(tmp, 'add', '--all')
+  if (git(tmp, 'status', '--porcelain').trim()) {
+    git(tmp, 'commit', '--quiet', '-m', `vrt report pr-${PR_NUMBER} ${COMMIT_SHA || ''} [skip ci]`)
+    execFileSync('git', ['-C', tmp, 'push', '--quiet', url, `HEAD:${HOST_BRANCH}`],
+      { stdio: ['ignore', 'pipe', 'pipe'] })
+  } else {
+    console.log('vrt-report: images unchanged; skipping push')
+  }
+  rmSync(tmp, { recursive: true, force: true })
+}
+
+async function gh(path, method = 'GET', body) {
+  const res = await fetch(`https://api.github.com${path}`, {
+    method,
+    headers: {
+      Authorization: `Bearer ${GH_TOKEN}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json',
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  })
+  if (!res.ok) throw new Error(`GitHub API ${method} ${path} -> ${res.status}: ${await res.text()}`)
+  return res.json()
+}
+
+async function upsertComment(body) {
+  const comments = await gh(`/repos/${REPO}/issues/${PR_NUMBER}/comments?per_page=100`)
+  const existing = comments.find((c) => typeof c.body === 'string' && c.body.includes(MARKER))
+  if (existing) {
+    await gh(`/repos/${REPO}/issues/comments/${existing.id}`, 'PATCH', { body })
+    console.log(`Updated comment ${existing.id}`)
+  } else {
+    const created = await gh(`/repos/${REPO}/issues/${PR_NUMBER}/comments`, 'POST', { body })
+    console.log(`Created comment ${created.id}`)
+  }
 }
 
 async function main() {

@@ -209,9 +209,13 @@ function publishToBranch(failures) {
       'Auto-managed VRT failure images (see scripts/vrt-report.mjs). Do not edit by hand.\n')
   }
   git(tmp, 'add', '--all')
-  git(tmp, 'commit', '--quiet', '-m', `vrt report pr-${PR_NUMBER} ${COMMIT_SHA || ''} [skip ci]`)
-  execFileSync('git', ['-C', tmp, 'push', '--quiet', url, `HEAD:${HOST_BRANCH}`],
-    { stdio: ['ignore', 'pipe', 'pipe'] })
+  if (git(tmp, 'status', '--porcelain').trim()) {
+    git(tmp, 'commit', '--quiet', '-m', `vrt report pr-${PR_NUMBER} ${COMMIT_SHA || ''} [skip ci]`)
+    execFileSync('git', ['-C', tmp, 'push', '--quiet', url, `HEAD:${HOST_BRANCH}`],
+      { stdio: ['ignore', 'pipe', 'pipe'] })
+  } else {
+    console.log('vrt-report: images unchanged; skipping push')
+  }
   rmSync(tmp, { recursive: true, force: true })
 }
 
