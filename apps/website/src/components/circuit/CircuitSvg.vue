@@ -115,8 +115,14 @@ watch(
 )
 
 // デバウンス処理
+// 幅が変わった時だけ再生成する。モバイルのアドレスバー伸縮では高さだけが
+// 変わって resize が連発するが、それで毎回パス全再生成＋ScrollTrigger
+// refresh をするとスクロール中に背景がガタつくため、高さのみの変化は無視する。
 let resizeTimer: number | null = null
+let lastWidth = window.innerWidth
 const handleResize = () => {
+  if (window.innerWidth === lastWidth) return
+  lastWidth = window.innerWidth
   if (resizeTimer !== null) {
     clearTimeout(resizeTimer)
   }

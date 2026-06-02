@@ -12,6 +12,9 @@ const HOME_SECTIONS = ['hero', 'about', 'atmosphere', 'events', 'topics', 'join'
 const VIEWPORTS = [
   { name: 'desktop', w: 1280, h: 800 },
   { name: 'mobile', w: 390, h: 844 },
+  // 保証する最小ディスプレイサイズ。#hero がこの高さに収まらず縦に伸びる
+  // ケースの回帰を直接検証する。
+  { name: 'mobile-min', w: 375, h: 800 },
 ] as const
 
 describe('HomeView sections', () => {

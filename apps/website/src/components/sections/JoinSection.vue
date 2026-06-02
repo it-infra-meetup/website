@@ -21,12 +21,15 @@
             </span>
           </a>
         </div>
+
+        <!-- フッターは通常フロー内（中央寄せの安定領域）に置く。画面最下端に
+             absolute で固定すると、iOS のアドレスバー伸縮とスナップ再調整で
+             表示が遅れてガタつくため。 -->
+        <footer class="mt-10 text-center text-[10px] muted-text font-mono">
+          &copy; 2025 ITインフラ集会
+        </footer>
       </div>
     </div>
-
-    <footer class="absolute bottom-2 w-full text-center text-[10px] muted-text font-mono">
-      &copy; 2025 ITインフラ集会
-    </footer>
   </section>
 </template>
 

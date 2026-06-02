@@ -9,7 +9,7 @@
   <SplitBackground />
 
   <!-- Main Content -->
-  <main>
+  <main class="snap-main">
     <HeroSection />
     <AboutSection />
     <AtmosphereSection />
