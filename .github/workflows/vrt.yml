@@ -4,13 +4,19 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  contents: read
+permissions: {}
+
+concurrency:
+  group: vrt-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   vrt:
     name: Visual Regression
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
     # Digest-pinned Playwright image: provides Chromium + system fonts (incl.
     # Japanese IPAGothic) so renders match `pnpm vrt:update`. Keep this digest
     # in sync with scripts/vrt-update.sh.
@@ -21,8 +27,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install pnpm
-        run: npm install -g pnpm@11
+      # Use mise (pnpm pinned in mise.toml) instead of an unpinned global
+      # install — same as the build/lint workflows. The container ships Node 24.
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -32,43 +39,33 @@ jobs:
       - name: Run visual regression tests
         run: pnpm --filter website test:vrt
 
-      - name: Upload diff artifacts on failure
+      # On failure, assemble a self-contained bundle (failure attachments +
+      # the baselines they were compared against). The privileged report runs
+      # in a separate workflow_run workflow (vrt-report.yml) that consumes ONLY
+      # this bundle — it never executes PR-controlled code. See vrt-report.yml.
+      - name: Assemble VRT report bundle
         if: ${{ failure() }}
+        run: |
+          set -euo pipefail
+          # No attachments => not a visual-diff failure (e.g. install error).
+          # Skip so the report workflow isn't triggered for nothing.
+          if [ ! -d apps/website/.vitest-attachments ]; then
+            echo "No VRT attachments; skipping report bundle."
+            exit 0
+          fi
+          bundle="$RUNNER_TEMP/vrt-report-bundle"
+          mkdir -p "$bundle/attachments" "$bundle/baselines"
+          cp -a apps/website/.vitest-attachments/. "$bundle/attachments/"
+          if [ -d apps/website/tests/vrt/__screenshots__ ]; then
+            cp -a apps/website/tests/vrt/__screenshots__/. "$bundle/baselines/"
+          fi
+          echo "VRT_BUNDLE_DIR=$bundle" >> "$GITHUB_ENV"
+
+      - name: Upload report bundle on failure
+        if: ${{ failure() && env.VRT_BUNDLE_DIR != '' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: vrt-failure-images
-          path: apps/website/.vitest-attachments/
-          # .vitest-attachments is a dot-dir; upload-artifact excludes hidden
-          # files by default, so the artifact would be empty without this.
+          name: vrt-report-bundle
+          path: ${{ env.VRT_BUNDLE_DIR }}
           include-hidden-files: true
           if-no-files-found: ignore
-
-  report:
-    name: Report failures
-    needs: vrt
-    if: ${{ always() && needs.vrt.result == 'failure' }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: vrt-failure-images
-          path: apps/website/.vitest-attachments
-
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-        with:
-          node-version: 24
-
-      - name: Build and post VRT failure report
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
-          REPO: ${{ github.repository }}
-        run: node scripts/vrt-report.mjs

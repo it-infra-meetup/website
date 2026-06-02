@@ -4,13 +4,17 @@ on:
   pull_request:
     types: [closed]
 
-permissions:
-  contents: read
+permissions: {}
+
+concurrency:
+  group: vrt-report-cleanup-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
 
 jobs:
   cleanup:
     name: Remove PR VRT images
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: write
     steps:

@@ -4,13 +4,19 @@ on:
   push:
     branches: [main]
 
-permissions:
-  contents: read
+permissions: {}
+
+# Never cancel an in-flight release: an interrupted S3 sync / CloudFront
+# invalidation could leave the live site half-deployed. Queue instead.
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     environment: production
     permissions:
       contents: write
