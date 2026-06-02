@@ -1,0 +1,40 @@
+name: VRT Report Cleanup
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    name: Remove PR VRT images
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Delete this PR's images from the vrt-report branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          url="https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
+          tmp="$(mktemp -d)"
+          if ! git clone --quiet --depth 1 --single-branch --branch vrt-report "$url" "$tmp"; then
+            echo "No vrt-report branch; nothing to clean."
+            exit 0
+          fi
+          cd "$tmp"
+          if [ ! -d "pr-${PR_NUMBER}" ]; then
+            echo "No images for PR ${PR_NUMBER}."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm --quiet -r "pr-${PR_NUMBER}"
+          git commit --quiet -m "vrt report cleanup pr-${PR_NUMBER} [skip ci]"
+          git push --quiet "$url" "HEAD:vrt-report"
+          echo "Removed pr-${PR_NUMBER} images."
