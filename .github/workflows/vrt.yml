@@ -38,6 +38,9 @@ jobs:
         with:
           name: vrt-failure-images
           path: apps/website/.vitest-attachments/
+          # .vitest-attachments is a dot-dir; upload-artifact excludes hidden
+          # files by default, so the artifact would be empty without this.
+          include-hidden-files: true
           if-no-files-found: ignore
 
   report:
