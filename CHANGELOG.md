@@ -1,3 +1,10 @@
+## [1.13.1](https://github.com/it-infra-meetup/website/compare/v1.13.0...v1.13.1) (2026-06-03)
+
+
+### Bug Fixes
+
+* **frontend:** guarantee min display size 375x800 on mobile Safari ([#49](https://github.com/it-infra-meetup/website/issues/49)) ([d1474d8](https://github.com/it-infra-meetup/website/commit/d1474d8768ed3137ab3d218f460c023ea9165fff))
+
 # [1.13.0](https://github.com/it-infra-meetup/website/compare/v1.12.0...v1.13.0) (2026-06-01)
 
 
