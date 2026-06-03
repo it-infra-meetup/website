@@ -84,7 +84,12 @@ const updatePaths = () => {
   }
 }
 
+// 幅が変わった時だけ再生成する。モバイルのアドレスバー伸縮による高さのみの
+// 変化で全パケットを作り直すとスクロール中に背景がガタつくため無視する。
+let lastWidth = window.innerWidth
 const handleResize = () => {
+  if (window.innerWidth === lastWidth) return
+  lastWidth = window.innerWidth
   if (resizeTimer !== null) {
     clearTimeout(resizeTimer)
   }

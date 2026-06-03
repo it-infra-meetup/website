@@ -38,7 +38,7 @@ The pinned image digest lives in two places that must stay in sync:
 - **Pages** (`pages.vrt.test.ts`): each of the 6 HomeView sections (`#hero`,
   `#about`, `#atmosphere`, `#events`, `#topics`, `#join`) and the `/lt-list`
   blocks (`.archive-header`, `.archive-grid`, `.pagination`), each at desktop
-  (1280×800) and mobile (390×844).
+  (1280×800), mobile (390×844), and the guaranteed minimum size (375×800).
 
 ## How determinism is achieved
 

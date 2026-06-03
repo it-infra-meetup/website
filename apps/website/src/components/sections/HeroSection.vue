@@ -20,7 +20,7 @@
             class="absolute top-0 right-0 w-20 h-20 bg-[var(--primary-color)]/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"
           />
 
-          <h3 class="text-xl font-bold primary-text mb-6 flex items-center gap-2 border-b border-[var(--primary-color)]/20 pb-2">
+          <h3 class="text-xl font-bold primary-text mb-3 md:mb-6 flex items-center gap-2 border-b border-[var(--primary-color)]/20 pb-2">
             <svg
               xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
               stroke="currentColor"
@@ -33,7 +33,7 @@
             HOW TO JOIN
           </h3>
 
-          <div class="space-y-4 mb-8">
+          <div class="space-y-2 md:space-y-4 mb-4 md:mb-8">
             <div v-for="(step, index) in joinSteps" :key="index" class="flex gap-3">
               <span
                 class="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--primary-color)]/20 primary-text flex items-center justify-center font-mono text-xs font-bold border border-[var(--primary-color)]/30"
@@ -54,7 +54,10 @@
                     </template>
                   </template>
                 </p>
-                <p class="text-xs muted-text">
+                <p
+                  v-if="step.description"
+                  class="text-xs muted-text hidden md:block"
+                >
                   {{ step.description }}
                 </p>
               </div>
