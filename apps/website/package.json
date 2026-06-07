@@ -30,7 +30,7 @@
     "@vitest/browser-playwright": "4.1.8",
     "@vue/tsconfig": "0.9.1",
     "autoprefixer": "10.5.0",
-    "eslint-plugin-vue": "10.9.1",
+    "eslint-plugin-vue": "10.9.2",
     "playwright": "1.60.0",
     "postcss": "8.5.15",
     "tailwindcss": "4.3.0",
