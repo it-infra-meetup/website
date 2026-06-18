@@ -1,10 +1,10 @@
 [tools]
 actionlint = "1.7.12"
-lefthook = "2.1.6"
+lefthook = "2.1.9"
 node = "24"
 pinact = "3.10.1"
 pnpm = "11"
-zizmor = "1.24.1"
+zizmor = "1.25.2"
 
 [settings]
 install_before = "3d"
