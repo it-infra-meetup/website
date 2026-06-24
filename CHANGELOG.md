@@ -1,3 +1,12 @@
+## [1.13.2](https://github.com/it-infra-meetup/website/compare/v1.13.1...v1.13.2) (2026-06-24)
+
+
+### Bug Fixes
+
+* **ci:** disable lefthook in release job so semantic-release can push to main ([#60](https://github.com/it-infra-meetup/website/issues/60)) ([d7559dd](https://github.com/it-infra-meetup/website/commit/d7559ddf44d8cf8100b1c0aa2b53f2438a19976c)), closes [#56](https://github.com/it-infra-meetup/website/issues/56)
+* **ci:** keep Playwright versions in sync and run VRT report step under bash ([#59](https://github.com/it-infra-meetup/website/issues/59)) ([0b8255d](https://github.com/it-infra-meetup/website/commit/0b8255d3b3f1ff0d5fc5622b593a715c19574705))
+* **deps:** update frontend ([#55](https://github.com/it-infra-meetup/website/issues/55)) ([f70e9c6](https://github.com/it-infra-meetup/website/commit/f70e9c615ddf462215650ffe111bf11945789374))
+
 ## [1.13.1](https://github.com/it-infra-meetup/website/compare/v1.13.0...v1.13.1) (2026-06-03)
 
 
