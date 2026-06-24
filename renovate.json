@@ -23,6 +23,23 @@
       "matchManagers": ["mise"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "mise"
+    },
+    {
+      "description": "Keep the Playwright npm package and the Playwright VRT container image in one PR so they always bump to the same version (the container ships the matching browser build). Last match wins over the github-actions -> actions rule above.",
+      "matchPackageNames": ["playwright", "mcr.microsoft.com/playwright"],
+      "groupName": "frontend"
+    }
+  ],
+  "customManagers": [
+    {
+      "description": "Track the Playwright image pinned in scripts/vrt-update.sh (a plain shell var no manager would otherwise see) so it bumps with the workflow container images.",
+      "customType": "regex",
+      "managerFilePatterns": ["/^scripts/vrt-update\\.sh$/"],
+      "matchStrings": [
+        "IMAGE=\"(?<depName>mcr\\.microsoft\\.com/playwright):(?<currentValue>[^@\"]+)@(?<currentDigest>sha256:[a-f0-9]+)\""
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "docker"
     }
   ]
 }

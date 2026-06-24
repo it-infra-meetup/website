@@ -45,6 +45,9 @@ jobs:
       # this bundle — it never executes PR-controlled code. See vrt-report.yml.
       - name: Assemble VRT report bundle
         if: ${{ failure() }}
+        # Container `run:` steps default to sh (dash), which rejects
+        # `set -o pipefail`; force bash so this step works on real VRT failures.
+        shell: bash
         run: |
           set -euo pipefail
           # No attachments => not a visual-diff failure (e.g. install error).
