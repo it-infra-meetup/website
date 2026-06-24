@@ -23,6 +23,11 @@ jobs:
       issues: write
       pull-requests: write
       id-token: write
+    # @semantic-release/git commits the version bump and pushes it to main.
+    # Disable lefthook so the local `pre-push` guard (which blocks direct pushes
+    # to main — intended for humans) doesn't reject the release bot's own push.
+    env:
+      LEFTHOOK: "0"
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
