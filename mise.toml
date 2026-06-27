@@ -4,7 +4,7 @@ lefthook = "2.1.9"
 node = "24"
 pinact = "4.1.0"
 pnpm = "11"
-zizmor = "1.25.2"
+zizmor = "1.26.1"
 
 [settings]
 install_before = "3d"
