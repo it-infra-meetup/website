@@ -12,17 +12,20 @@
     {
       "matchManagers": ["npm"],
       "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "frontend"
+      "groupName": "frontend",
+      "automerge": true
     },
     {
       "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["minor", "patch", "digest"],
-      "groupName": "actions"
+      "groupName": "actions",
+      "automerge": true
     },
     {
       "matchManagers": ["mise"],
       "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "mise"
+      "groupName": "mise",
+      "automerge": true
     },
     {
       "description": "Keep the Playwright npm package and the Playwright VRT container image in one PR so they always bump to the same version (the container ships the matching browser build). Last match wins over the github-actions -> actions rule above.",
