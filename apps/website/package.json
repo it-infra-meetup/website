@@ -15,28 +15,28 @@
     "test:vrt:update": "vitest run --config vitest.config.ts --update"
   },
   "dependencies": {
-    "@lucide/vue": "1.21.0",
+    "@lucide/vue": "1.22.0",
     "@vrc-ta-hub/client": "workspace:*",
     "gsap": "3.15.0",
     "pinia": "3.0.4",
-    "vue": "3.5.38",
+    "vue": "3.5.39",
     "vue-router": "5.1.0"
   },
   "devDependencies": {
     "@pinia/testing": "1.0.3",
-    "@tailwindcss/postcss": "4.3.1",
+    "@tailwindcss/postcss": "4.3.2",
     "@types/node": "25.9.4",
     "@vitejs/plugin-vue": "6.0.7",
     "@vitest/browser-playwright": "4.1.9",
     "@vue/tsconfig": "0.9.1",
-    "autoprefixer": "10.5.1",
+    "autoprefixer": "10.5.2",
     "eslint-plugin-vue": "10.9.2",
     "playwright": "1.61.1",
-    "postcss": "8.5.15",
-    "tailwindcss": "4.3.1",
-    "vite": "8.1.0",
+    "postcss": "8.5.16",
+    "tailwindcss": "4.3.2",
+    "vite": "8.1.1",
     "vitest": "4.1.9",
     "vitest-browser-vue": "2.1.0",
-    "vue-tsc": "3.3.5"
+    "vue-tsc": "3.3.6"
   }
 }
