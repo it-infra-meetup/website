@@ -1,3 +1,10 @@
+## [1.13.5](https://github.com/it-infra-meetup/website/compare/v1.13.4...v1.13.5) (2026-07-18)
+
+
+### Bug Fixes
+
+* **deps:** update frontend ([#75](https://github.com/it-infra-meetup/website/issues/75)) ([21bfe5e](https://github.com/it-infra-meetup/website/commit/21bfe5ef7cc7eb6d46cc56ce2d29d16ba4ee5121))
+
 ## [1.13.4](https://github.com/it-infra-meetup/website/compare/v1.13.3...v1.13.4) (2026-07-11)
 
 
