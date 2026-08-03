@@ -4,3 +4,6 @@ packages:
 allowBuilds:
   esbuild: true
 minimumReleaseAge: 4320
+minimumReleaseAgeExclude:
+  # Renovate security update: postcss@8.5.23
+  - postcss@8.5.23
