@@ -32,7 +32,7 @@
     "autoprefixer": "10.5.3",
     "eslint-plugin-vue": "10.9.2",
     "playwright": "1.61.1",
-    "postcss": "8.5.23",
+    "postcss": "8.5.24",
     "tailwindcss": "4.3.2",
     "vite": "8.1.4",
     "vitest": "4.1.10",
