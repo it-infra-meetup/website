@@ -7,3 +7,5 @@ minimumReleaseAge: 4320
 minimumReleaseAgeExclude:
   # Renovate security update: postcss@8.5.23
   - postcss@8.5.23
+  # Renovate security update: vitest@4.1.11
+  - vitest@4.1.11
