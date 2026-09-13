@@ -1,0 +1,21 @@
+diff --git a/dist/lucide-vue.d.ts b/dist/lucide-vue.d.ts
+index cd25132162e8bd0d1f3d574b7a6cd150b8190763..30785d3f360c3ab36a6218c2b1cf0da3623b49fd 100644
+--- a/dist/lucide-vue.d.ts
++++ b/dist/lucide-vue.d.ts
+@@ -1 +1,2 @@
++import type { FunctionalComponent } from 'vue';
+ import { SVGAttributes, FunctionalComponent as FunctionalComponent$1 } from 'vue';
+diff --git a/dist/lucide-vue.prefixed.d.ts b/dist/lucide-vue.prefixed.d.ts
+index 35853224375df25d1a7524e4f0a28fd8f422f60a..8bdc81541778fbe5f5512ddf21d9297ee73f6ca2 100644
+--- a/dist/lucide-vue.prefixed.d.ts
++++ b/dist/lucide-vue.prefixed.d.ts
+@@ -1 +1,2 @@
++import type { FunctionalComponent } from 'vue';
+ import { SVGAttributes, FunctionalComponent as FunctionalComponent$1 } from 'vue';
+diff --git a/dist/lucide-vue.suffixed.d.ts b/dist/lucide-vue.suffixed.d.ts
+index 9c83ed6e4262b4cb8f2e394392565d5be2a774db..373eec933b482841251d9613657f13c4066eeadd 100644
+--- a/dist/lucide-vue.suffixed.d.ts
++++ b/dist/lucide-vue.suffixed.d.ts
+@@ -1 +1,2 @@
++import type { FunctionalComponent } from 'vue';
+ import { SVGAttributes, FunctionalComponent as FunctionalComponent$1 } from 'vue';

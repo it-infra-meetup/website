@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@lucide/vue@1.43.0': c6b7712b3252d9eca317d89883ba2896a14a1e468774cdb45d675dc05a0baf77
+
 importers:
 
   .:
@@ -52,7 +55,7 @@ importers:
     dependencies:
       '@lucide/vue':
         specifier: 1.43.0
-        version: 1.43.0(vue@3.5.42(typescript@6.0.3))
+        version: 1.43.0(patch_hash=c6b7712b3252d9eca317d89883ba2896a14a1e468774cdb45d675dc05a0baf77)(vue@3.5.42(typescript@6.0.3))
       '@vrc-ta-hub/client':
         specifier: workspace:*
         version: link:../../packages/vrc-ta-hub-client
@@ -3382,7 +3385,7 @@ snapshots:
 
   '@keyv/serialize@1.1.1': {}
 
-  '@lucide/vue@1.43.0(vue@3.5.42(typescript@6.0.3))':
+  '@lucide/vue@1.43.0(patch_hash=c6b7712b3252d9eca317d89883ba2896a14a1e468774cdb45d675dc05a0baf77)(vue@3.5.42(typescript@6.0.3))':
     dependencies:
       vue: 3.5.42(typescript@6.0.3)
 
