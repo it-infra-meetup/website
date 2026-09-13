@@ -27,7 +27,7 @@
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "25.9.6",
     "@vitejs/plugin-vue": "6.0.8",
-    "@vitest/browser-playwright": "4.1.11",
+    "@vitest/browser-playwright": "5.0.0",
     "@vue/tsconfig": "0.9.1",
     "autoprefixer": "10.5.5",
     "eslint-plugin-vue": "10.11.0",
@@ -35,7 +35,7 @@
     "postcss": "8.5.28",
     "tailwindcss": "4.3.3",
     "vite": "8.2.2",
-    "vitest": "4.1.11",
+    "vitest": "5.0.0",
     "vitest-browser-vue": "3.1.0",
     "vue-tsc": "3.3.11"
   }
