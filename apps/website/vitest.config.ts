@@ -13,6 +13,8 @@ export default defineConfig({
   test: {
     include: ['tests/vrt/**/*.vrt.test.ts'],
     setupFiles: ['./tests/vrt/setup.ts'],
+    // Keep the VRT bundle/report path stable across Vitest's v5 default change.
+    attachmentsDir: '.vitest-attachments',
     browser: {
       enabled: true,
       provider: playwright(),
