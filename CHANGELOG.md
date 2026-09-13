@@ -1,3 +1,10 @@
+## [1.13.6](https://github.com/it-infra-meetup/website/compare/v1.13.5...v1.13.6) (2026-09-13)
+
+
+### Bug Fixes
+
+* **deps:** update dependency pinia to v4 ([#85](https://github.com/it-infra-meetup/website/issues/85)) ([c2e58c8](https://github.com/it-infra-meetup/website/commit/c2e58c8e02ca27c625644574d73d52d4aba476ee))
+
 ## [1.13.5](https://github.com/it-infra-meetup/website/compare/v1.13.4...v1.13.5) (2026-07-18)
 
 
