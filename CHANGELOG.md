@@ -1,3 +1,10 @@
+## [1.13.7](https://github.com/it-infra-meetup/website/compare/v1.13.6...v1.13.7) (2026-09-14)
+
+
+### Bug Fixes
+
+* **frontend:** update dependencies and migrate visual tests to Vitest 5 ([#100](https://github.com/it-infra-meetup/website/issues/100)) ([2a7111c](https://github.com/it-infra-meetup/website/commit/2a7111c2f779605ea031c24de9df61b5c3d8c3d7))
+
 ## [1.13.6](https://github.com/it-infra-meetup/website/compare/v1.13.5...v1.13.6) (2026-09-13)
 
 
