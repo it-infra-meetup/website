@@ -9,3 +9,7 @@ minimumReleaseAgeExclude:
   - postcss@8.5.23
   # Renovate security update: vitest@4.1.11
   - vitest@4.1.11
+# Lucide 1.43.0 references FunctionalComponent without importing that name.
+# Remove this version-specific declaration patch when upgrading to a fixed release.
+patchedDependencies:
+  '@lucide/vue@1.43.0': patches/@lucide__vue@1.43.0.patch
