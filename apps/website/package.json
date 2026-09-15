@@ -15,7 +15,7 @@
     "test:vrt:update": "vitest run --config vitest.config.ts --update"
   },
   "dependencies": {
-    "@lucide/vue": "1.43.0",
+    "@lucide/vue": "1.45.0",
     "@vrc-ta-hub/client": "workspace:*",
     "gsap": "3.15.0",
     "pinia": "4.0.3",
@@ -29,12 +29,12 @@
     "@vitejs/plugin-vue": "6.0.8",
     "@vitest/browser-playwright": "5.0.0",
     "@vue/tsconfig": "0.9.1",
-    "autoprefixer": "10.5.5",
+    "autoprefixer": "10.6.0",
     "eslint-plugin-vue": "10.11.0",
     "playwright": "1.63.0",
     "postcss": "8.5.28",
     "tailwindcss": "4.3.3",
-    "vite": "8.2.2",
+    "vite": "8.3.0",
     "vitest": "5.0.0",
     "vitest-browser-vue": "3.1.0",
     "vue-tsc": "3.3.11"
