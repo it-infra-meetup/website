@@ -2,7 +2,7 @@
 actionlint = "1.7.12"
 lefthook = "2.1.14"
 node = "24"
-pinact = "4.1.1"
+pinact = "5.0.0"
 pnpm = "11"
 zizmor = "1.30.1"
 
