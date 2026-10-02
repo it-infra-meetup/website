@@ -1,6 +1,6 @@
 [tools]
 actionlint = "1.7.12"
-lefthook = "2.1.14"
+lefthook = "2.1.16"
 node = "24"
 pinact = "5.0.0"
 pnpm = "11"
