@@ -9,6 +9,8 @@ minimumReleaseAgeExclude:
   - postcss@8.5.23
   # Renovate security update: vitest@4.1.11
   - vitest@4.1.11
+  # Renovate security update: vite@8.2.4
+  - vite@8.2.4
 # Lucide 1.43.0 references FunctionalComponent without importing that name.
 # Remove this version-specific declaration patch when upgrading to a fixed release.
 patchedDependencies:
