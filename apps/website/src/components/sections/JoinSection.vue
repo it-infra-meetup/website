@@ -27,6 +27,10 @@
              表示が遅れてガタつくため。 -->
         <footer class="mt-10 text-center text-[10px] muted-text font-mono">
           &copy; 2025 ITインフラ集会
+          <span class="mx-2" aria-hidden="true">|</span>
+          <RouterLink to="/privacy" class="footer-link">
+            プライバシーポリシー
+          </RouterLink>
         </footer>
       </div>
     </div>
@@ -35,9 +39,21 @@
 
 <script setup lang="ts">
 import {ExternalLink} from '@lucide/vue'
+import {RouterLink} from 'vue-router'
 </script>
 
 <style scoped>
+.footer-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: var(--primary-color);
+}
+
 .main-text {
   color: var(--text-color);
 }
