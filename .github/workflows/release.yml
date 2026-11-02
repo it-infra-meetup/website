@@ -58,5 +58,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+          # semantic-release の prepareCmd (vite build) に引き継がれ、GA4 の測定 ID として埋め込まれる
+          VITE_GA_MEASUREMENT_ID: ${{ vars.GA_MEASUREMENT_ID }}
           S3_BUCKET_NAME: ${{ vars.S3_BUCKET_NAME }}
         run: pnpm exec semantic-release
