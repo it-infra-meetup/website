@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/it-infra-meetup/website/compare/v1.13.7...v1.14.0) (2026-11-02)
+
+
+### Features
+
+* **frontend:** Google Analytics 4 の導入とプライバシーポリシーページの追加 ([#127](https://github.com/it-infra-meetup/website/issues/127)) ([a243b23](https://github.com/it-infra-meetup/website/commit/a243b230e728b2944e44ba0f94aa587fe077a748)), closes [#125](https://github.com/it-infra-meetup/website/issues/125)
+
 ## [1.13.7](https://github.com/it-infra-meetup/website/compare/v1.13.6...v1.13.7) (2026-09-14)
 
 
