@@ -19,7 +19,7 @@
           プライバシーポリシー
         </h1>
         <p class="text-gray-500 font-mono text-xs">
-          制定日: {{ ESTABLISHED_AT }}
+          制定日: {{ ESTABLISHED_AT }} / 改定日: {{ REVISED_AT }}
         </p>
       </header>
 
@@ -28,6 +28,7 @@
       <div class="policy-section">
         <h2>1. アクセス解析ツールについて</h2>
         <p>本サイトでは、利用状況を把握してサイトを改善するために、Google LLC が提供するアクセス解析ツール「Google アナリティクス」を利用しています。Google アナリティクスは Cookie などを使用してデータを収集します。このデータは匿名で収集されており、個人を特定するものではありません。</p>
+        <p>なお、欧州経済領域、英国、スイスなど一部の国・地域からのアクセスでは、IP アドレスから判定した国に基づき、Google アナリティクスを読み込みません。</p>
         <h3>収集される主な情報</h3>
         <ul>
           <li>閲覧したページ、閲覧日時、滞在時間</li>
@@ -70,6 +71,7 @@ import DataStreamBackground from '@/components/layout/DataStreamBackground.vue'
 
 const SITE_URL = 'https://it-infra-meetup.org/'
 const ESTABLISHED_AT = '2026年11月2日'
+const REVISED_AT = '2026年11月5日'
 const GOOGLE_PARTNER_SITES_URL = 'https://policies.google.com/technologies/partner-sites?hl=ja'
 const GOOGLE_PRIVACY_URL = 'https://policies.google.com/privacy?hl=ja'
 const GA_OPTOUT_URL = 'https://tools.google.com/dlpage/gaoptout?hl=ja'

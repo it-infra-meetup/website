@@ -7,25 +7,20 @@ declare global {
   }
 }
 
-const MEASUREMENT_ID_PATTERN = /^G-[A-Z0-9]+$/
-
 /**
  * Google Analytics 4 (gtag.js) を読み込み、ルート遷移ごとに page_view を送信する。
  *
- * - 本番ビルドかつ `VITE_GA_MEASUREMENT_ID` が設定されているときだけ有効になる。
- *   ローカル開発・PR ビルド・VRT では何も読み込まない。
+ * - HTML に `<meta name="ga-measurement-id">` があるときだけ有効になる。
+ *   このタグは本番ビルドの `index.analytics.html` にのみ含まれ、CDN が閲覧者の国に応じて
+ *   配信する HTML を選ぶ。`index.html` やローカル開発・PR ビルド・VRT では何も読み込まない。
  * - ハッシュ履歴 (`/#/lt-list`) のままだと GA4 のレポート上はすべて `/` に集約されるため、
  *   `page_location` には `origin + to.fullPath` (例: `https://example.org/lt-list`) を仮想 URL として送る。
  * - 自動 page_view と二重計測にならないよう、`send_page_view: false` を指定する。
  *   GA4 管理画面の拡張計測「ブラウザの履歴イベントに基づくページの変更」も無効にすること。
  */
 export function setupGoogleAnalytics(router: Router): void {
-  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID
-  if (!import.meta.env.PROD || !measurementId) return
-  if (!MEASUREMENT_ID_PATTERN.test(measurementId)) {
-    console.warn(`[analytics] Invalid GA measurement ID: ${measurementId}`)
-    return
-  }
+  const measurementId = document.querySelector<HTMLMetaElement>('meta[name="ga-measurement-id"]')?.content
+  if (!measurementId) return
 
   window.dataLayer = window.dataLayer || []
   // gtag.js は配列ではなく arguments オブジェクトそのものが push されることを前提にしている
