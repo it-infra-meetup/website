@@ -73,6 +73,13 @@ pnpm --filter website dev                                       # equivalent to 
   This is separate from the live event data the `eventsStore` fetches; add a new past LT by
   adding an image to `public/lts/` and entries to both consts files.
 - GSAP plugins (`ScrollTrigger`, `MotionPathPlugin`) are registered globally in `main.ts`.
+- **GA4 is gated by viewer country at the edge.** The build emits `index.html` (no GA) and
+  `index.analytics.html` (adds a `ga-measurement-id` meta tag, via a plugin in `vite.config.ts`);
+  the app only loads GA if it finds that tag. The CDN picks the page by country, using
+  configuration kept outside this repo. Never stop emitting `index.analytics.html`: viewers routed
+  to it would get a 403.
+- **This repo is public; the infra repo is private.** Don't put infra file paths, resource names,
+  IDs or links to it in code, commits, issues or PRs here.
 
 ### API client (`packages/vrc-ta-hub-client/src`)
 

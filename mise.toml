@@ -7,7 +7,7 @@ pnpm = "11"
 zizmor = "1.31.1"
 
 [settings]
-install_before = "3d"
+minimum_release_age = "3d"
 
 [hooks]
 postinstall = "lefthook install"
