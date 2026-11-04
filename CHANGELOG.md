@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/it-infra-meetup/website/compare/v1.14.0...v1.15.0) (2026-11-04)
+
+
+### Features
+
+* **frontend:** GA4 を読み込む HTML を分け、国別に配信できるようにする ([#128](https://github.com/it-infra-meetup/website/issues/128)) ([f736d0b](https://github.com/it-infra-meetup/website/commit/f736d0b5399af480279a166e3874959a4d49055f))
+
 # [1.14.0](https://github.com/it-infra-meetup/website/compare/v1.13.7...v1.14.0) (2026-11-02)
 
 
