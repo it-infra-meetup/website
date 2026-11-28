@@ -14,7 +14,7 @@
 set -euo pipefail
 
 # Must match the `container.image` digest in .github/workflows/vrt.yml.
-IMAGE="mcr.microsoft.com/playwright:v1.63.0-noble@sha256:eff16c30e6f3f4af0a03fa4b706120d5e9b0891c344a27d64559aff5900a4a27"
+IMAGE="mcr.microsoft.com/playwright:v1.65.1-noble@sha256:1507cbfc550a63a6b7396791ca4f00df17beb56342d2447b3f106c306f525579"
 
 docker run --rm \
   -e HOME=/root -e CI=1 \
